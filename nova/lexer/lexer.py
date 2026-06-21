@@ -1,6 +1,13 @@
 from nova.lexer.token import Token
 from nova.lexer.token_types import TokenType
 
+from nova.errors import (
+    InvalidFloatLiteralError,
+    UnterminatedStringError,
+    UnterminatedCommentError,
+    UnexpectedCharacterError,
+)
+
 KEYWORDS = {
     "print": TokenType.PRINT,
     "true": TokenType.BOOLEAN,
@@ -92,8 +99,10 @@ class Lexer:
             self.advance()
 
             if self.current_char is None or not self.current_char.isdigit():
-                raise Exception(
-                    f"Invalid float literal at line {self.line}, column {self.column}"
+                raise InvalidFloatLiteralError(
+                    "Invalid float literal.",
+                    self.line,
+                    self.column,
                 )
 
             while self.current_char is not None and self.current_char.isdigit():
@@ -120,8 +129,10 @@ class Lexer:
             self.advance()
 
         if self.current_char is None:
-            raise Exception(
-                f"Unterminated string at line {start_line}, column {start_column}"
+            raise UnterminatedStringError(
+                "Unterminated string.",
+                start_line,
+                start_column,
             )
 
         self.advance()
@@ -144,8 +155,10 @@ class Lexer:
 
             self.advance()
 
-        raise Exception(
-            f"Unterminated multi-line comment at line {self.line}, column {self.column}"
+        raise UnterminatedCommentError(
+            "Unterminated multi-line comment.",
+            self.line,
+            self.column,
         )
 
     def next_token(self):
@@ -283,9 +296,10 @@ class Lexer:
                 self.advance()
                 return Token(TokenType.COMMA, ",", line, column)
 
-            raise Exception(
-                f"Unexpected character '{self.current_char}' "
-                f"at line {line}, column {column}"
+            raise UnexpectedCharacterError(
+                f"Unexpected character '{self.current_char}'.",
+                line,
+                column,
             )
 
         return Token(TokenType.EOF, None, self.line, self.column)

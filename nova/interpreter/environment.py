@@ -6,14 +6,28 @@ from nova.interpreter.runtime_values import (
     ArrayValue,
 )
 
-from nova.parser.ast_nodes import ArrayType
+from nova.ast import ArrayType
+
+from nova.errors import (
+    DatatypeMismatchError,
+    DuplicateDeclarationError,
+    UndeclaredVariableError,
+    UninitializedVariableError,
+    ConstantReassignmentError,
+)
 
 
 class Environment:
     def __init__(self):
         self.variables = {}
 
-    def validate_type(self, expected_type, value):
+    def validate_type(
+        self,
+        expected_type,
+        value,
+        line=None,
+        column=None,
+    ):
         if value is None:
             return
 
@@ -27,23 +41,39 @@ class Environment:
         # Primitive Types
         if expected_type == "N":
             if not isinstance(value, NumberValue):
-                raise Exception("Datatype mismatch.")
+                raise DatatypeMismatchError(
+                    "Datatype mismatch.",
+                    line,
+                    column,
+                )
             return
 
         if expected_type == "S":
             if not isinstance(value, StringValue):
-                raise Exception("Datatype mismatch.")
+                raise DatatypeMismatchError(
+                    "Datatype mismatch.",
+                    line,
+                    column,
+                )
             return
 
         if expected_type == "B":
             if not isinstance(value, BooleanValue):
-                raise Exception("Datatype mismatch.")
+                raise DatatypeMismatchError(
+                    "Datatype mismatch.",
+                    line,
+                    column,
+                )
             return
 
         # Array Types
         if isinstance(expected_type, ArrayType):
             if not isinstance(value, ArrayValue):
-                raise Exception("Datatype mismatch.")
+                raise DatatypeMismatchError(
+                    "Datatype mismatch.",
+                    line,
+                    column,
+                )
 
             allowed_types = expected_type.element_types
 
@@ -55,6 +85,8 @@ class Environment:
                         self.validate_type(
                             allowed_type,
                             element,
+                            line,
+                            column,
                         )
                         valid = True
                         break
@@ -63,17 +95,41 @@ class Environment:
                         pass
 
                 if not valid:
-                    raise Exception("Invalid datatype inside array.")
+                    raise DatatypeMismatchError(
+                        "Invalid datatype inside array.",
+                        line,
+                        column,
+                    )
 
             return
 
-        raise Exception(f"Unknown datatype '{expected_type}'.")
+        raise DatatypeMismatchError(
+            f"Unknown datatype '{expected_type}'.",
+            line,
+            column,
+        )
 
-    def declare_variable(self, name, var_type, value=None):
+    def declare_variable(
+        self,
+        name,
+        var_type,
+        value=None,
+        line=None,
+        column=None,
+    ):
         if name in self.variables:
-            raise Exception(f"Variable '{name}' already declared.")
+            raise DuplicateDeclarationError(
+                f"Variable '{name}' already declared.",
+                line,
+                column,
+            )
 
-        self.validate_type(var_type, value)
+        self.validate_type(
+            var_type,
+            value,
+            line,
+            column,
+        )
 
         self.variables[name] = {
             "type": var_type,
@@ -82,11 +138,27 @@ class Environment:
             "constant": False,
         }
 
-    def declare_constant(self, name, const_type, value=None):
+    def declare_constant(
+        self,
+        name,
+        const_type,
+        value=None,
+        line=None,
+        column=None,
+    ):
         if name in self.variables:
-            raise Exception(f"Variable '{name}' already declared.")
+            raise DuplicateDeclarationError(
+                f"Variable '{name}' already declared.",
+                line,
+                column,
+            )
 
-        self.validate_type(const_type, value)
+        self.validate_type(
+            const_type,
+            value,
+            line,
+            column,
+        )
 
         self.variables[name] = {
             "type": const_type,
@@ -95,38 +167,74 @@ class Environment:
             "constant": True,
         }
 
-    def assign_variable(self, name, value):
+    def assign_variable(
+        self,
+        name,
+        value,
+        line=None,
+        column=None,
+    ):
         if name not in self.variables:
-            raise Exception(f"Variable '{name}' is not declared.")
+            raise UndeclaredVariableError(
+                f"Variable '{name}' is not declared.",
+                line,
+                column,
+            )
 
         variable = self.variables[name]
 
         if variable["constant"] and variable["initialized"]:
-            raise Exception("Cannot reassign immutable variable.")
+            raise ConstantReassignmentError(
+                "Cannot reassign immutable variable.",
+                line,
+                column,
+            )
 
         self.validate_type(
             variable["type"],
             value,
+            line,
+            column,
         )
 
         variable["value"] = value
         variable["initialized"] = True
-        
-    def get_variable_info(self, name):
+
+    def get_variable_info(
+        self,
+        name,
+        line=None,
+        column=None,
+    ):
         if name not in self.variables:
-            raise Exception(
-                f"Variable '{name}' is not declared."
+            raise UndeclaredVariableError(
+                f"Variable '{name}' is not declared.",
+                line,
+                column,
             )
 
         return self.variables[name]
 
-    def get_variable(self, name):
+    def get_variable(
+        self,
+        name,
+        line=None,
+        column=None,
+    ):
         if name not in self.variables:
-            raise Exception(f"Variable '{name}' is not declared.")
+            raise UndeclaredVariableError(
+                f"Variable '{name}' is not declared.",
+                line,
+                column,
+            )
 
         variable = self.variables[name]
 
         if not variable["initialized"]:
-            raise Exception(f"Variable '{name}' accessed before initialization.")
+            raise UninitializedVariableError(
+                f"Variable '{name}' accessed before initialization.",
+                line,
+                column,
+            )
 
         return variable["value"]

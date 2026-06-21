@@ -1,6 +1,6 @@
 from nova.lexer.token_types import TokenType
 
-from nova.parser.ast_nodes import (
+from nova.ast import (
     Program,
     VariableDeclaration,
     ConstantDeclaration,
@@ -17,6 +17,12 @@ from nova.parser.ast_nodes import (
     ArrayAssignment,
     BinaryExpression,
     UnaryExpression,
+)
+
+from nova.errors import (
+    UnexpectedTokenError,
+    UnexpectedEOFError,
+    InvalidTypeError,
 )
 
 
@@ -46,14 +52,19 @@ class Parser:
 
     def consume(self, expected_type):
         if self.current_token is None:
-            raise Exception(f"Expected {expected_type.name}, got EOF")
+            last_token = self.tokens[self.position - 1]
+
+            raise UnexpectedEOFError(
+                f"Expected {expected_type.name}, got EOF.",
+                last_token.line,
+                last_token.column,
+            )
 
         if self.current_token.type != expected_type:
-            raise Exception(
-                f"Expected {expected_type.name}, "
-                f"got {self.current_token.type.name} "
-                f"at line {self.current_token.line}, "
-                f"column {self.current_token.column}"
+            raise UnexpectedTokenError(
+                f"Expected {expected_type.name}, got {self.current_token.type.name}.",
+                self.current_token.line,
+                self.current_token.column,
             )
 
         token = self.current_token
@@ -78,7 +89,13 @@ class Parser:
 
     def parse_statement(self):
         if self.current_token is None:
-            raise Exception("Unexpected EOF while parsing statement")
+            last_token = self.tokens[self.position - 1]
+
+            raise UnexpectedEOFError(
+                "Unexpected EOF while parsing statement.",
+                last_token.line,
+                last_token.column,
+            )
 
         if self.current_token.type == TokenType.PRINT:
             return self.parse_print_statement()
@@ -87,7 +104,11 @@ class Parser:
             next_token = self.peek()
 
             if next_token is None:
-                raise Exception("Unexpected EOF while parsing statement")
+                raise UnexpectedEOFError(
+                    "Unexpected EOF while parsing statement.",
+                    self.current_token.line,
+                    self.current_token.column,
+                )
 
             if next_token.type == TokenType.COLON:
                 return self.parse_variable_declaration()
@@ -102,10 +123,10 @@ class Parser:
             if next_token.type == TokenType.EQUALS:
                 return self.parse_assignment()
 
-        raise Exception(
-            f"Unexpected token {self.current_token.type.name} "
-            f"at line {self.current_token.line}, "
-            f"column {self.current_token.column}"
+        raise UnexpectedTokenError(
+            f"Unexpected token {self.current_token.type.name}.",
+            self.current_token.line,
+            self.current_token.column,
         )
 
     def parse_variable_declaration(self):
@@ -129,6 +150,8 @@ class Parser:
             name=name_token.value,
             var_type=var_type,
             value=value,
+            line=name_token.line,
+            column=name_token.column,
         )
 
     def parse_constant_declaration(self):
@@ -152,11 +175,19 @@ class Parser:
             name=name_token.value,
             const_type=const_type,
             value=value,
+            line=name_token.line,
+            column=name_token.column,
         )
 
     def parse_type(self):
         if self.current_token is None:
-            raise Exception("Unexpected EOF while parsing type")
+            last_token = self.tokens[self.position - 1]
+
+            raise UnexpectedEOFError(
+                "Unexpected EOF while parsing type.",
+                last_token.line,
+                last_token.column,
+            )
 
         if self.current_token.type == TokenType.TYPE:
             token = self.current_token
@@ -168,9 +199,10 @@ class Parser:
         if self.current_token.type == TokenType.LBRACKET:
             return self.parse_array_type()
 
-        raise Exception(
-            f"Expected type at line {self.current_token.line}, "
-            f"column {self.current_token.column}"
+        raise InvalidTypeError(
+            "Expected type.",
+            self.current_token.line,
+            self.current_token.column,
         )
 
     def parse_array_type(self):
@@ -195,7 +227,7 @@ class Parser:
         return ArrayType(element_types)
 
     def parse_array_literal(self):
-        self.consume(TokenType.LBRACKET)
+        lbracket = self.consume(TokenType.LBRACKET)
 
         elements = []
 
@@ -208,7 +240,11 @@ class Parser:
         ):
             self.advance()
 
-            return ArrayLiteral(elements)
+            return ArrayLiteral(
+                elements,
+                line=lbracket.line,
+                column=lbracket.column,
+            )
 
         while True:
             self.skip_newlines()
@@ -231,7 +267,11 @@ class Parser:
 
         self.consume(TokenType.RBRACKET)
 
-        return ArrayLiteral(elements)
+        return ArrayLiteral(
+            elements,
+            line=lbracket.line,
+            column=lbracket.column,
+        )
 
     def skip_newlines(self):
         while (
@@ -254,6 +294,8 @@ class Parser:
             expression = ArrayAccess(
                 array=expression,
                 index=index,
+                line=expression.line,
+                column=expression.column,
             )
 
         return expression
@@ -295,7 +337,13 @@ class Parser:
         return False
 
     def parse_array_assignment(self):
-        target = Identifier(self.consume(TokenType.IDENTIFIER).value)
+        name_token = self.consume(TokenType.IDENTIFIER)
+
+        target = Identifier(
+            name_token.value,
+            line=name_token.line,
+            column=name_token.column,
+        )
 
         target = self.parse_array_access(target)
 
@@ -306,6 +354,8 @@ class Parser:
         return ArrayAssignment(
             target=target,
             value=value,
+            line=target.line,
+            column=target.column,
         )
 
     def parse_assignment(self):
@@ -315,18 +365,26 @@ class Parser:
 
         value = self.parse_expression()
 
-        return Assignment(name=name_token.value, value=value)
+        return Assignment(
+            name=name_token.value,
+            value=value,
+            line=name_token.line,
+            column=name_token.column,
+        )
 
     def parse_print_statement(self):
-        self.consume(TokenType.PRINT)
-
+        print_token = self.consume(TokenType.PRINT)
         self.consume(TokenType.LPAREN)
 
         expression = self.parse_expression()
 
         self.consume(TokenType.RPAREN)
 
-        return PrintStatement(expression)
+        return PrintStatement(
+            expression,
+            line=print_token.line,
+            column=print_token.column,
+        )
 
     def parse_expression(self):
         return self.parse_or()
@@ -337,13 +395,20 @@ class Parser:
         while (
             self.current_token is not None and self.current_token.type == TokenType.OR
         ):
-            operator = self.current_token.value
+            token = self.current_token
+            operator = token.value
 
             self.advance()
 
             right = self.parse_and()
 
-            left = BinaryExpression(left, operator, right)
+            left = BinaryExpression(
+                left,
+                operator,
+                right,
+                line=token.line,
+                column=token.column,
+            )
 
         return left
 
@@ -353,13 +418,20 @@ class Parser:
         while (
             self.current_token is not None and self.current_token.type == TokenType.AND
         ):
-            operator = self.current_token.value
+            token = self.current_token
+            operator = token.value
 
             self.advance()
 
             right = self.parse_equality()
 
-            left = BinaryExpression(left, operator, right)
+            left = BinaryExpression(
+                left,
+                operator,
+                right,
+                line=token.line,
+                column=token.column,
+            )
 
         return left
 
@@ -370,13 +442,20 @@ class Parser:
             TokenType.EQUAL_EQUAL,
             TokenType.NOT_EQUAL,
         ):
-            operator = self.current_token.value
+            token = self.current_token
+            operator = token.value
 
             self.advance()
 
             right = self.parse_comparison()
 
-            left = BinaryExpression(left, operator, right)
+            left = BinaryExpression(
+                left,
+                operator,
+                right,
+                line=token.line,
+                column=token.column,
+            )
 
         return left
 
@@ -389,13 +468,20 @@ class Parser:
             TokenType.LESS_EQUAL,
             TokenType.GREATER_EQUAL,
         ):
-            operator = self.current_token.value
+            token = self.current_token
+            operator = token.value
 
             self.advance()
 
             right = self.parse_additive()
 
-            left = BinaryExpression(left, operator, right)
+            left = BinaryExpression(
+                left,
+                operator,
+                right,
+                line=token.line,
+                column=token.column,
+            )
 
         return left
 
@@ -406,13 +492,20 @@ class Parser:
             TokenType.PLUS,
             TokenType.MINUS,
         ):
-            operator = self.current_token.value
+            token = self.current_token
+            operator = token.value
 
             self.advance()
 
             right = self.parse_multiplicative()
 
-            left = BinaryExpression(left, operator, right)
+            left = BinaryExpression(
+                left,
+                operator,
+                right,
+                line=token.line,
+                column=token.column,
+            )
 
         return left
 
@@ -424,56 +517,94 @@ class Parser:
             TokenType.SLASH,
             TokenType.MODULO,
         ):
-            operator = self.current_token.value
+            token = self.current_token
+            operator = token.value
 
             self.advance()
 
             right = self.parse_unary()
 
-            left = BinaryExpression(left, operator, right)
+            left = BinaryExpression(
+                left,
+                operator,
+                right,
+                line=token.line,
+                column=token.column,
+            )
 
         return left
 
     def parse_unary(self):
         if self.current_token is not None and self.current_token.type == TokenType.NOT:
-            operator = self.current_token.value
+            token = self.current_token
+            operator = token.value
 
             self.advance()
 
             operand = self.parse_unary()
 
-            return UnaryExpression(operator, operand)
+            return UnaryExpression(
+                operator,
+                operand,
+                line=token.line,
+                column=token.column,
+            )
 
         return self.parse_primary()
 
     def parse_primary(self):
         if self.current_token is None:
-            raise Exception("Unexpected EOF while parsing expression")
+            last_token = self.tokens[self.position - 1]
+
+            raise UnexpectedEOFError(
+                "Unexpected EOF while parsing expression.",
+                last_token.line,
+                last_token.column,
+            )
 
         token = self.current_token
 
         if token.type == TokenType.NUMBER:
             self.advance()
-            return NumberLiteral(token.value)
+            return NumberLiteral(
+                token.value,
+                line=token.line,
+                column=token.column,
+            )
 
         if token.type == TokenType.STRING:
             self.advance()
-            return StringLiteral(token.value)
+            return StringLiteral(
+                token.value,
+                line=token.line,
+                column=token.column,
+            )
 
         if token.type == TokenType.BOOLEAN:
             self.advance()
-            return BooleanLiteral(token.value)
+            return BooleanLiteral(
+                token.value,
+                line=token.line,
+                column=token.column,
+            )
 
         if token.type == TokenType.NULL:
             self.advance()
-            return NullLiteral()
+            return NullLiteral(
+                line=token.line,
+                column=token.column,
+            )
 
         if token.type == TokenType.LBRACKET:
             return self.parse_array_literal()
 
         if token.type == TokenType.IDENTIFIER:
             self.advance()
-            expression = Identifier(token.value)
+            expression = Identifier(
+                token.value,
+                line=token.line,
+                column=token.column,
+            )
             return self.parse_array_access(expression)
 
         if token.type == TokenType.LPAREN:
@@ -485,8 +616,8 @@ class Parser:
 
             return expression
 
-        raise Exception(
-            f"Unexpected token {token.type.name} "
-            f"at line {token.line}, "
-            f"column {token.column}"
+        raise UnexpectedTokenError(
+            f"Unexpected token {token.type.name}.",
+            token.line,
+            token.column,
         )
