@@ -1,0 +1,13 @@
+/*
+Expected Error
+
+Cannot modify immutable collection.
+*/
+
+numbers:: [N] = [
+    1,
+    2,
+    3
+]
+
+numbers[0] = 10

@@ -1,0 +1,13 @@
+/*
+Expected Error
+
+Array index must be numeric.
+*/
+
+numbers: [N] = [
+    1,
+    2,
+    3
+]
+
+print(numbers["hello"])

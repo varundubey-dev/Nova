@@ -1,0 +1,20 @@
+/*
+Expected Output
+
+[10, 20, 30]
+[Alice, Bob]
+*/
+
+numbers: [N] = [
+    10,
+    20,
+    30
+]
+
+names: [S] = [
+    "Alice",
+    "Bob"
+]
+
+print(numbers)
+print(names)

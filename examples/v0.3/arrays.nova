@@ -1,0 +1,24 @@
+/*
+Expected Output
+
+[1, 2, 3]
+[A, B, C]
+[true, false]
+*/
+
+numbers: [N] = [1, 2, 3]
+
+names: [S] = [
+    "A",
+    "B",
+    "C"
+]
+
+flags: [B] = [
+    true,
+    false
+]
+
+print(numbers)
+print(names)
+print(flags)

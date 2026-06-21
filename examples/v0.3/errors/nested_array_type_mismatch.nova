@@ -1,0 +1,12 @@
+/*
+Expected Error
+
+Datatype mismatch.
+*/
+
+matrix: [[N]] = [
+    [1, 2],
+    [3, 4]
+]
+
+matrix[0][1] = "hello"

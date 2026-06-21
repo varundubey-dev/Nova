@@ -1,0 +1,18 @@
+/*
+Expected Output
+
+[1, hello]
+[100, world]
+*/
+
+mixed: [N,S] = [
+    1,
+    "hello"
+]
+
+print(mixed)
+
+mixed[0] = 100
+mixed[1] = "world"
+
+print(mixed)

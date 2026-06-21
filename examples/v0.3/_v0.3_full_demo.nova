@@ -1,0 +1,170 @@
+// NOVA v0.3 Full Demo
+
+// Typed Arrays
+
+numbers: [N] = [
+    1,
+    2,
+    3
+]
+
+print(numbers)
+
+numbers[0] = 10
+
+print(numbers)
+print(numbers[0])
+
+// Expected:
+// [1,2,3]
+// [10,2,3]
+// 10
+
+// String Arrays
+
+names: [S] = [
+    "Alice",
+    "Bob",
+    "Charlie"
+]
+
+print(names)
+print(names[1])
+
+// Expected:
+// ["Alice","Bob","Charlie"]
+// Bob
+
+// Boolean Arrays
+
+flags: [B] = [
+    true,
+    false,
+    true
+]
+
+print(flags)
+print(flags[2])
+
+// Expected:
+// [true,false,true]
+// true
+
+// Any Arrays
+
+anything: [U] = [
+    123,
+    "hello",
+    true,
+    null
+]
+
+print(anything)
+
+// Expected:
+// [123,"hello",true,null]
+
+// Multi-Type Arrays
+
+mixed: [N,S] = [
+    1,
+    2,
+    "three",
+    "four"
+]
+
+print(mixed)
+
+mixed[0] = 999
+mixed[2] = "updated"
+
+print(mixed)
+
+// Expected:
+// [1,2,"three","four"]
+// [999,2,"updated","four"]
+
+// Empty Arrays
+
+emptyNumbers: [N] = []
+emptyStrings: [S] = []
+emptyAnything: [U] = []
+
+print(emptyNumbers)
+print(emptyStrings)
+print(emptyAnything)
+
+// Expected:
+// []
+// []
+// []
+
+// Nested Arrays
+
+matrix: [[N]] = [
+    [1,2,3],
+    [4,5,6],
+    [7,8,9]
+]
+
+print(matrix)
+
+// Expected:
+// [[1,2,3],[4,5,6],[7,8,9]]
+
+// Nested Access
+
+print(matrix[0][0])
+print(matrix[1][1])
+print(matrix[2][2])
+
+// Expected:
+// 1
+// 5
+// 9
+
+// Nested Mutation
+
+matrix[0][1] = 100
+matrix[2][2] = 999
+
+print(matrix)
+
+// Expected:
+// [[1,100,3],[4,5,6],[7,8,999]]
+
+// Constant Arrays
+
+immutableNumbers:: [N] = [
+    10,
+    20,
+    30
+]
+
+print(immutableNumbers)
+
+// Expected:
+// [10,20,30]
+
+// Arrays Inside Arrays
+
+nestedMixed: [[U]] = [
+    [1, "hello"],
+    [true, null]
+]
+
+print(nestedMixed)
+
+// Expected:
+// [[1,"hello"],[true,null]]
+
+// Deep Access
+
+print(nestedMixed[0][1])
+print(nestedMixed[1][0])
+
+// Expected:
+// hello
+// true
+
+// End of Demo

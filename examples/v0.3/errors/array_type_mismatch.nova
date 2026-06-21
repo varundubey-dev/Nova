@@ -1,0 +1,13 @@
+/*
+Expected Error
+
+Datatype mismatch.
+*/
+
+numbers: [N] = [
+    1,
+    2,
+    3
+]
+
+numbers[0] = "hello"

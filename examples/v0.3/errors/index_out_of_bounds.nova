@@ -1,0 +1,13 @@
+/*
+Expected Error
+
+Array index out of bounds.
+*/
+
+numbers: [N] = [
+    1,
+    2,
+    3
+]
+
+print(numbers[99])
