@@ -47,7 +47,12 @@ class TokenType(Enum):
     
     LBRACKET = auto()
     RBRACKET = auto()
+    
+    LBRACE = auto()
+    RBRACE = auto()
 
+    DOT = auto()
+    QUESTION = auto()
     COMMA = auto()
 
     # Special

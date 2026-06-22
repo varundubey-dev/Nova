@@ -15,7 +15,7 @@ KEYWORDS = {
     "null": TokenType.NULL,
 }
 
-TYPES = {"S", "N", "B", "U"}
+TYPES = {"S", "N", "B", "U", "M"}
 
 
 class Lexer:
@@ -287,14 +287,31 @@ class Lexer:
             if self.current_char == "[":
                 self.advance()
                 return Token(TokenType.LBRACKET, "[", line, column)
-
+            
             if self.current_char == "]":
                 self.advance()
                 return Token(TokenType.RBRACKET, "]", line, column)
+            
+            if self.current_char == "{":
+                self.advance()
+                return Token(TokenType.LBRACE, "{", line, column)
+            
+            if self.current_char == "}":
+                self.advance()
+                return Token(TokenType.RBRACE, "}", line, column)
+            
+            if self.current_char == ".":
+                self.advance()
+                return Token(TokenType.DOT, ".", line, column)
+
 
             if self.current_char == ",":
                 self.advance()
                 return Token(TokenType.COMMA, ",", line, column)
+            
+            if self.current_char == "?":
+                self.advance()
+                return Token(TokenType.QUESTION, "?", line, column)
 
             raise UnexpectedCharacterError(
                 f"Unexpected character '{self.current_char}'.",
