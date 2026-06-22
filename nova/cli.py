@@ -1,8 +1,6 @@
 import sys
 
-from nova.lexer.lexer import Lexer
-from nova.parser.parser import Parser
-from nova.interpreter.interpreter import Interpreter
+from nova.api import run_file
 
 from nova.errors import (
     NovaError,
@@ -42,9 +40,7 @@ def format_error(error, source, path):
 
     output = []
 
-    output.append(
-        f"{Color.BOLD}{Color.RED}{category}{Color.RESET}: " f"{error.message}"
-    )
+    output.append(f"{Color.BOLD}{Color.RED}{category}{Color.RESET}: {error.message}")
 
     if error.line is not None and error.column is not None:
         lines = source.splitlines()
@@ -70,21 +66,23 @@ def format_error(error, source, path):
     return "\n".join(output)
 
 
-def run_file(path):
-    with open(path, "r", encoding="utf-8") as file:
-        source = file.read()
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: nova <file.nova>")
+        sys.exit(1)
+
+    path = sys.argv[1]
 
     try:
-        lexer = Lexer(source)
-        tokens = lexer.tokenize()
+        _, output = run_file(path)
 
-        parser = Parser(tokens)
-        ast = parser.parse()
-
-        interpreter = Interpreter()
-        interpreter.interpret(ast)
+        for line in output:
+            print(line)
 
     except NovaError as error:
+        with open(path, "r", encoding="utf-8") as file:
+            source = file.read()
+
         print(
             format_error(
                 error,
@@ -94,14 +92,6 @@ def run_file(path):
         )
 
         sys.exit(1)
-
-
-def main():
-    if len(sys.argv) != 2:
-        print("Usage: nova <file.nova>")
-        sys.exit(1)
-
-    run_file(sys.argv[1])
 
 
 if __name__ == "__main__":

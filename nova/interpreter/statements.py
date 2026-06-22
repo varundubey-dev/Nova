@@ -41,7 +41,7 @@ class StatementInterpreter(InterpreterBase):
         )
 
         return value
-    
+
     def visit_schema_declaration(self, node):
         self.environment.declare_schema(
             node.name,
@@ -67,6 +67,6 @@ class StatementInterpreter(InterpreterBase):
     def visit_print_statement(self, node):
         value = self.visit(node.expression)
 
-        print(self.format_value(value))
+        self.output.append(self.format_value(value))
 
         return value

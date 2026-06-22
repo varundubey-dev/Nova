@@ -26,6 +26,7 @@ from nova.ast import (
 class InterpreterBase:
     def __init__(self):
         self.environment = Environment()
+        self.output = []
 
     def interpret(self, program):
         return self.visit(program)
