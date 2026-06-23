@@ -24,6 +24,9 @@ from nova.ast import (
     MapEntry,
     PropertyAccess,
     PropertyAssignment,
+    IfStatement,
+    BlockStatement,
+    TernaryExpression,
 )
 
 from nova.errors import (
@@ -40,6 +43,8 @@ class Parser:
         self.position = 0
 
         self.current_token = tokens[0] if tokens else None
+
+        self.paren_depth = 0
 
     def advance(self):
         self.position += 1
@@ -106,6 +111,9 @@ class Parser:
 
         if self.current_token.type == TokenType.PRINT:
             return self.parse_print_statement()
+
+        if self.current_token.type == TokenType.IF:
+            return self.parse_if_statement()
 
         if self.current_token.type == TokenType.IDENTIFIER:
             next_token = self.peek()
@@ -302,6 +310,10 @@ class Parser:
         ):
             self.advance()
 
+    def skip_expression_newlines(self):
+        if self.paren_depth > 0:
+            self.skip_newlines()
+
     def parse_postfix_expression(self, expression):
         while self.current_token is not None:
 
@@ -404,9 +416,10 @@ class Parser:
 
     def parse_print_statement(self):
         print_token = self.consume(TokenType.PRINT)
+
         self.consume(TokenType.LPAREN)
 
-        expression = self.parse_expression()
+        expression = self.parse_grouped_expression()
 
         self.consume(TokenType.RPAREN)
 
@@ -417,18 +430,59 @@ class Parser:
         )
 
     def parse_expression(self):
-        return self.parse_or()
+        self.skip_expression_newlines()
+        return self.parse_ternary()
+
+    def parse_ternary(self):
+        condition = self.parse_or()
+
+        self.skip_expression_newlines()
+
+        if (
+            self.current_token is not None
+            and self.current_token.type == TokenType.QUESTION
+        ):
+            token = self.current_token
+
+            self.advance()
+
+            self.skip_expression_newlines()
+
+            true_expression = self.parse_expression()
+
+            self.skip_expression_newlines()
+
+            self.consume(TokenType.COLON)
+
+            self.skip_expression_newlines()
+
+            false_expression = self.parse_expression()
+
+            return TernaryExpression(
+                condition=condition,
+                true_expression=true_expression,
+                false_expression=false_expression,
+                line=token.line,
+                column=token.column,
+            )
+
+        return condition
 
     def parse_or(self):
         left = self.parse_and()
 
-        while (
-            self.current_token is not None and self.current_token.type == TokenType.OR
-        ):
+        while True:
+            self.skip_expression_newlines()
+
+            if self.current_token is None or self.current_token.type != TokenType.OR:
+                break
+
             token = self.current_token
             operator = token.value
 
             self.advance()
+
+            self.skip_expression_newlines()
 
             right = self.parse_and()
 
@@ -445,13 +499,18 @@ class Parser:
     def parse_and(self):
         left = self.parse_equality()
 
-        while (
-            self.current_token is not None and self.current_token.type == TokenType.AND
-        ):
+        while True:
+            self.skip_expression_newlines()
+
+            if self.current_token is None or self.current_token.type != TokenType.AND:
+                break
+
             token = self.current_token
             operator = token.value
 
             self.advance()
+
+            self.skip_expression_newlines()
 
             right = self.parse_equality()
 
@@ -468,14 +527,21 @@ class Parser:
     def parse_equality(self):
         left = self.parse_comparison()
 
-        while self.current_token is not None and self.current_token.type in (
-            TokenType.EQUAL_EQUAL,
-            TokenType.NOT_EQUAL,
-        ):
+        while True:
+            self.skip_expression_newlines()
+
+            if self.current_token is None or self.current_token.type not in (
+                TokenType.EQUAL_EQUAL,
+                TokenType.NOT_EQUAL,
+            ):
+                break
+
             token = self.current_token
             operator = token.value
 
             self.advance()
+
+            self.skip_expression_newlines()
 
             right = self.parse_comparison()
 
@@ -492,16 +558,23 @@ class Parser:
     def parse_comparison(self):
         left = self.parse_additive()
 
-        while self.current_token is not None and self.current_token.type in (
-            TokenType.LESS,
-            TokenType.GREATER,
-            TokenType.LESS_EQUAL,
-            TokenType.GREATER_EQUAL,
-        ):
+        while True:
+            self.skip_expression_newlines()
+
+            if self.current_token is None or self.current_token.type not in (
+                TokenType.LESS,
+                TokenType.GREATER,
+                TokenType.LESS_EQUAL,
+                TokenType.GREATER_EQUAL,
+            ):
+                break
+
             token = self.current_token
             operator = token.value
 
             self.advance()
+
+            self.skip_expression_newlines()
 
             right = self.parse_additive()
 
@@ -518,14 +591,21 @@ class Parser:
     def parse_additive(self):
         left = self.parse_multiplicative()
 
-        while self.current_token is not None and self.current_token.type in (
-            TokenType.PLUS,
-            TokenType.MINUS,
-        ):
+        while True:
+            self.skip_expression_newlines()
+
+            if self.current_token is None or self.current_token.type not in (
+                TokenType.PLUS,
+                TokenType.MINUS,
+            ):
+                break
+
             token = self.current_token
             operator = token.value
 
             self.advance()
+
+            self.skip_expression_newlines()
 
             right = self.parse_multiplicative()
 
@@ -542,15 +622,22 @@ class Parser:
     def parse_multiplicative(self):
         left = self.parse_unary()
 
-        while self.current_token is not None and self.current_token.type in (
-            TokenType.STAR,
-            TokenType.SLASH,
-            TokenType.MODULO,
-        ):
+        while True:
+            self.skip_expression_newlines()
+
+            if self.current_token is None or self.current_token.type not in (
+                TokenType.STAR,
+                TokenType.SLASH,
+                TokenType.MODULO,
+            ):
+                break
+
             token = self.current_token
             operator = token.value
 
             self.advance()
+
+            self.skip_expression_newlines()
 
             right = self.parse_unary()
 
@@ -565,11 +652,18 @@ class Parser:
         return left
 
     def parse_unary(self):
-        if self.current_token is not None and self.current_token.type == TokenType.NOT:
+        self.skip_expression_newlines()
+
+        if self.current_token is not None and self.current_token.type in (
+            TokenType.NOT,
+            TokenType.MINUS,
+        ):
             token = self.current_token
             operator = token.value
 
             self.advance()
+
+            self.skip_expression_newlines()
 
             operand = self.parse_unary()
 
@@ -583,6 +677,8 @@ class Parser:
         return self.parse_primary()
 
     def parse_primary(self):
+        self.skip_expression_newlines()
+
         if self.current_token is None:
             last_token = self.tokens[self.position - 1]
 
@@ -633,17 +729,19 @@ class Parser:
 
         if token.type == TokenType.IDENTIFIER:
             self.advance()
+
             expression = Identifier(
                 token.value,
                 line=token.line,
                 column=token.column,
             )
+
             return self.parse_postfix_expression(expression)
 
         if token.type == TokenType.LPAREN:
             self.advance()
 
-            expression = self.parse_expression()
+            expression = self.parse_grouped_expression()
 
             self.consume(TokenType.RPAREN)
 
@@ -876,3 +974,73 @@ class Parser:
             line=target.line,
             column=target.column,
         )
+
+    def parse_block_statement(self):
+        lbrace = self.consume(TokenType.LBRACE)
+
+        statements = []
+
+        self.skip_newlines()
+
+        while (
+            self.current_token is not None
+            and self.current_token.type != TokenType.RBRACE
+        ):
+            statements.append(self.parse_statement())
+            self.skip_newlines()
+
+        self.consume(TokenType.RBRACE)
+
+        return BlockStatement(
+            statements,
+            line=lbrace.line,
+            column=lbrace.column,
+        )
+
+    def parse_if_statement(self):
+        if_token = self.consume(TokenType.IF)
+
+        condition = self.parse_expression()
+
+        then_branch = self.parse_block_statement()
+
+        else_branch = None
+
+        self.skip_newlines()
+
+        if self.current_token is not None and self.current_token.type == TokenType.ELSE:
+            self.advance()
+
+            self.skip_newlines()
+
+            if (
+                self.current_token is not None
+                and self.current_token.type == TokenType.IF
+            ):
+                else_branch = self.parse_if_statement()
+
+            else:
+                else_branch = self.parse_block_statement()
+
+        return IfStatement(
+            condition=condition,
+            then_branch=then_branch,
+            else_branch=else_branch,
+            line=if_token.line,
+            column=if_token.column,
+        )
+
+    def parse_grouped_expression(self):
+        self.paren_depth += 1
+
+        try:
+            self.skip_newlines()
+
+            expression = self.parse_expression()
+
+            self.skip_newlines()
+
+            return expression
+
+        finally:
+            self.paren_depth -= 1

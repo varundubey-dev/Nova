@@ -61,6 +61,19 @@ class ExpressionInterpreter(StatementInterpreter):
 
             return BooleanValue(not operand.value)
 
+        if node.operator == "-":
+            if not isinstance(
+                operand,
+                NumberValue,
+            ):
+                raise InvalidOperandError(
+                    "Operand must be numeric.",
+                    node.line,
+                    node.column,
+                )
+
+            return NumberValue(-operand.value)
+
         raise UnknownOperatorError(
             f"Unknown operator '{node.operator}'",
             node.line,
