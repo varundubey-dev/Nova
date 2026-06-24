@@ -1,6 +1,10 @@
 from nova.interpreter.base import InterpreterBase
-from nova.interpreter.runtime_values import BooleanValue
-from nova.errors import ConditionTypeError
+from nova.interpreter.runtime_values import (
+    BooleanValue,
+    NumberValue,
+    ArrayValue,
+)
+from nova.errors import ConditionTypeError, InvalidRangeError, NotIterableError
 
 
 class StatementInterpreter(InterpreterBase):
@@ -107,5 +111,106 @@ class StatementInterpreter(InterpreterBase):
 
         if node.else_branch is not None:
             return self.visit(node.else_branch)
+
+        return None
+
+    def visit_while_statement(self, node):
+        while True:
+            condition = self.visit(node.condition)
+
+            if not isinstance(
+                condition,
+                BooleanValue,
+            ):
+                raise ConditionTypeError(
+                    "Condition must evaluate to a Boolean value.",
+                    node.line,
+                    node.column,
+                )
+
+            if not condition.value:
+                break
+
+            self.visit(node.body)
+
+        return None
+
+    def visit_for_range_statement(self, node):
+        start = self.visit(node.start)
+        end = self.visit(node.end)
+
+        if not isinstance(start, NumberValue):
+            raise InvalidRangeError(
+                "Range bounds must be numeric.",
+                node.line,
+                node.column,
+            )
+
+        if not isinstance(end, NumberValue):
+            raise InvalidRangeError(
+                "Range bounds must be numeric.",
+                node.line,
+                node.column,
+            )
+
+        start_value = int(start.value)
+        end_value = int(end.value)
+
+        if start_value <= end_value:
+            stop = end_value + 1 if node.inclusive else end_value
+            values = range(start_value, stop)
+
+        else:
+            stop = end_value - 1 if node.inclusive else end_value
+            values = range(start_value, stop, -1)
+
+        for value in values:
+            previous_environment = self.environment
+
+            self.environment = self.environment.create_child()
+
+            try:
+                self.environment.declare_variable(
+                    node.variable_name,
+                    "N",
+                    NumberValue(value),
+                )
+
+                self.visit(node.body)
+
+            finally:
+                self.environment = previous_environment
+
+        return None
+
+    def visit_for_each_statement(self, node):
+        iterable = self.visit(node.iterable)
+
+        if not isinstance(
+            iterable,
+            ArrayValue,
+        ):
+            raise NotIterableError(
+                "Value is not iterable.",
+                node.line,
+                node.column,
+            )
+
+        for element in iterable.value:
+            previous_environment = self.environment
+
+            self.environment = self.environment.create_child()
+
+            try:
+                self.environment.declare_variable(
+                    node.variable_name,
+                    "U",
+                    element,
+                )
+
+                self.visit(node.body)
+
+            finally:
+                self.environment = previous_environment
 
         return None

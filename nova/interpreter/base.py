@@ -19,6 +19,9 @@ from nova.ast import (
     TernaryExpression,
     IfStatement,
     BlockStatement,
+    WhileStatement,
+    ForRangeStatement,
+    ForEachStatement,
     SchemaDeclaration,
     MapLiteral,
     PropertyAccess,
@@ -61,6 +64,15 @@ class InterpreterBase:
 
         if isinstance(node, IfStatement):
             return self.visit_if_statement(node)
+
+        if isinstance(node, WhileStatement):
+            return self.visit_while_statement(node)
+
+        if isinstance(node, ForRangeStatement):
+            return self.visit_for_range_statement(node)
+
+        if isinstance(node, ForEachStatement):
+            return self.visit_for_each_statement(node)
 
         if isinstance(node, NumberLiteral):
             return self.visit_number_literal(node)
@@ -132,6 +144,15 @@ class InterpreterBase:
         raise NotImplementedError
 
     def visit_if_statement(self, node):
+        raise NotImplementedError
+
+    def visit_while_statement(self, node):
+        raise NotImplementedError
+
+    def visit_for_range_statement(self, node):
+        raise NotImplementedError
+
+    def visit_for_each_statement(self, node):
         raise NotImplementedError
 
     # -------------------------

@@ -24,6 +24,8 @@ from nova.errors.runtime_errors import (
     UnknownOperatorError,
     NullOperationError,
     ConditionTypeError,
+    InvalidRangeError,
+    NotIterableError
 )
 
 from nova.errors.type_errors import (
@@ -54,6 +56,8 @@ __all__ = [
     "UnknownOperatorError",
     "NullOperationError",
     "ConditionTypeError",
+    "InvalidRangeError",
+    "NotIterableError",
     "TypeError",
     "DatatypeMismatchError",
     "InvalidOperandError",
