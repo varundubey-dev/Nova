@@ -27,6 +27,9 @@ from nova.ast import (
     IfStatement,
     BlockStatement,
     TernaryExpression,
+    WhileStatement,
+    ForRangeStatement,
+    ForEachStatement,
 )
 
 from nova.errors import (
@@ -114,6 +117,12 @@ class Parser:
 
         if self.current_token.type == TokenType.IF:
             return self.parse_if_statement()
+
+        if self.current_token.type == TokenType.WHILE:
+            return self.parse_while_statement()
+
+        if self.current_token.type == TokenType.FOR:
+            return self.parse_for_statement()
 
         if self.current_token.type == TokenType.IDENTIFIER:
             next_token = self.peek()
@@ -419,19 +428,29 @@ class Parser:
 
         self.consume(TokenType.LPAREN)
 
-        expressions = []
+        self.paren_depth += 1
 
-        expressions.append(self.parse_expression())
+        try:
+            self.skip_newlines()
 
-        while (
-            self.current_token is not None
-            and self.current_token.type == TokenType.COMMA
-        ):
-            self.advance()
+            expressions = [self.parse_expression()]
 
-            expressions.append(self.parse_expression())
+            while (
+                self.current_token is not None
+                and self.current_token.type == TokenType.COMMA
+            ):
+                self.advance()
 
-        self.consume(TokenType.RPAREN)
+                self.skip_newlines()
+
+                expressions.append(self.parse_expression())
+
+            self.skip_newlines()
+
+            self.consume(TokenType.RPAREN)
+
+        finally:
+            self.paren_depth -= 1
 
         return PrintStatement(
             expressions,
@@ -1054,3 +1073,108 @@ class Parser:
 
         finally:
             self.paren_depth -= 1
+
+    def parse_while_statement(self):
+        while_token = self.consume(TokenType.WHILE)
+
+        condition = self.parse_expression()
+
+        body = self.parse_block_statement()
+
+        return WhileStatement(
+            condition=condition,
+            body=body,
+            line=while_token.line,
+            column=while_token.column,
+        )
+
+    def is_range_loop(self):
+        pos = self.position
+
+        while pos < len(self.tokens):
+            token = self.tokens[pos]
+
+            if token.type in (
+                TokenType.RANGE_EXCLUSIVE,
+                TokenType.RANGE_INCLUSIVE,
+            ):
+                return True
+
+            if token.type == TokenType.LBRACE:
+                return False
+
+            pos += 1
+
+        return False
+
+    def parse_for_statement(self):
+        if self.is_range_loop():
+            return self.parse_for_range_statement()
+
+        return self.parse_for_each_statement()
+
+    def parse_for_range_statement(self):
+        for_token = self.consume(TokenType.FOR)
+
+        variable_token = self.consume(TokenType.IDENTIFIER)
+
+        self.consume(TokenType.IN)
+
+        start = self.parse_expression()
+
+        range_token = self.current_token
+
+        if range_token is None:
+            raise UnexpectedEOFError(
+                "Expected range operator.",
+                variable_token.line,
+                variable_token.column,
+            )
+
+        if range_token.type == TokenType.RANGE_EXCLUSIVE:
+            inclusive = False
+            self.advance()
+
+        elif range_token.type == TokenType.RANGE_INCLUSIVE:
+            inclusive = True
+            self.advance()
+
+        else:
+            raise UnexpectedTokenError(
+                "Expected range operator.",
+                range_token.line,
+                range_token.column,
+            )
+
+        end = self.parse_expression()
+
+        body = self.parse_block_statement()
+
+        return ForRangeStatement(
+            variable_name=variable_token.value,
+            start=start,
+            end=end,
+            inclusive=inclusive,
+            body=body,
+            line=for_token.line,
+            column=for_token.column,
+        )
+
+    def parse_for_each_statement(self):
+        for_token = self.consume(TokenType.FOR)
+
+        variable_token = self.consume(TokenType.IDENTIFIER)
+
+        self.consume(TokenType.IN)
+
+        iterable = self.parse_expression()
+
+        body = self.parse_block_statement()
+
+        return ForEachStatement(
+            variable_name=variable_token.value,
+            iterable=iterable,
+            body=body,
+            line=for_token.line,
+            column=for_token.column,
+        )
