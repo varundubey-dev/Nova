@@ -12,14 +12,13 @@ KEYWORDS = {
     "print": TokenType.PRINT,
     "if": TokenType.IF,
     "else": TokenType.ELSE,
-
     "while": TokenType.WHILE,
     "for": TokenType.FOR,
     "in": TokenType.IN,
-
     "break": TokenType.BREAK,
     "continue": TokenType.CONTINUE,
-
+    "fn": TokenType.FN,
+    "return": TokenType.RETURN,
     "true": TokenType.BOOLEAN,
     "false": TokenType.BOOLEAN,
     "null": TokenType.NULL,
@@ -223,6 +222,16 @@ class Lexer:
             # =====================
             # Two-character tokens
             # =====================
+
+            if self.current_char == "-" and self.peek() == ">":
+                self.advance()
+                self.advance()
+                return Token(
+                    TokenType.ARROW,
+                    "->",
+                    line,
+                    column,
+                )
 
             if self.current_char == "=" and self.peek() == "=":
                 self.advance()

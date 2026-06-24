@@ -23,6 +23,9 @@ class TokenType(Enum):
     BREAK = auto()
     CONTINUE = auto()
 
+    FN = auto()
+    RETURN = auto()
+
     # Datatypes
     TYPE = auto()
 
@@ -45,7 +48,7 @@ class TokenType(Enum):
     AND = auto()
     OR = auto()
     NOT = auto()
-    
+
     RANGE_EXCLUSIVE = auto()
     RANGE_INCLUSIVE = auto()
 
@@ -56,16 +59,18 @@ class TokenType(Enum):
 
     LPAREN = auto()
     RPAREN = auto()
-    
+
     LBRACKET = auto()
     RBRACKET = auto()
-    
+
     LBRACE = auto()
     RBRACE = auto()
 
     DOT = auto()
     QUESTION = auto()
     COMMA = auto()
+    
+    ARROW = auto()
 
     # Special
     NEWLINE = auto()
