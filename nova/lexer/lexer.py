@@ -12,9 +12,14 @@ KEYWORDS = {
     "print": TokenType.PRINT,
     "if": TokenType.IF,
     "else": TokenType.ELSE,
+
     "while": TokenType.WHILE,
     "for": TokenType.FOR,
     "in": TokenType.IN,
+
+    "break": TokenType.BREAK,
+    "continue": TokenType.CONTINUE,
+
     "true": TokenType.BOOLEAN,
     "false": TokenType.BOOLEAN,
     "null": TokenType.NULL,

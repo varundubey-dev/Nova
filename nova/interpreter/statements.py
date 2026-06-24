@@ -4,7 +4,18 @@ from nova.interpreter.runtime_values import (
     NumberValue,
     ArrayValue,
 )
-from nova.errors import ConditionTypeError, InvalidRangeError, NotIterableError
+
+from nova.interpreter.loop_signals import (
+    BreakSignal,
+    ContinueSignal,
+)
+
+from nova.errors import (
+    ConditionTypeError,
+    InvalidRangeError,
+    NotIterableError,
+    InvalidLoopControlError,
+)
 
 
 class StatementInterpreter(InterpreterBase):
@@ -115,23 +126,36 @@ class StatementInterpreter(InterpreterBase):
         return None
 
     def visit_while_statement(self, node):
-        while True:
-            condition = self.visit(node.condition)
+        self.enter_loop()
 
-            if not isinstance(
-                condition,
-                BooleanValue,
-            ):
-                raise ConditionTypeError(
-                    "Condition must evaluate to a Boolean value.",
-                    node.line,
-                    node.column,
-                )
+        try:
+            while True:
+                condition = self.visit(node.condition)
 
-            if not condition.value:
-                break
+                if not isinstance(
+                    condition,
+                    BooleanValue,
+                ):
+                    raise ConditionTypeError(
+                        "Condition must evaluate to a Boolean value.",
+                        node.line,
+                        node.column,
+                    )
 
-            self.visit(node.body)
+                if not condition.value:
+                    break
+
+                try:
+                    self.visit(node.body)
+
+                except ContinueSignal:
+                    continue
+
+                except BreakSignal:
+                    break
+
+        finally:
+            self.exit_loop()
 
         return None
 
@@ -164,22 +188,35 @@ class StatementInterpreter(InterpreterBase):
             stop = end_value - 1 if node.inclusive else end_value
             values = range(start_value, stop, -1)
 
-        for value in values:
-            previous_environment = self.environment
+        self.enter_loop()
 
-            self.environment = self.environment.create_child()
+        try:
+            for value in values:
+                previous_environment = self.environment
 
-            try:
-                self.environment.declare_variable(
-                    node.variable_name,
-                    "N",
-                    NumberValue(value),
-                )
+                self.environment = self.environment.create_child()
 
-                self.visit(node.body)
+                try:
+                    self.environment.declare_variable(
+                        node.variable_name,
+                        "N",
+                        NumberValue(value),
+                    )
 
-            finally:
-                self.environment = previous_environment
+                    try:
+                        self.visit(node.body)
+
+                    except ContinueSignal:
+                        continue
+
+                    except BreakSignal:
+                        break
+
+                finally:
+                    self.environment = previous_environment
+
+        finally:
+            self.exit_loop()
 
         return None
 
@@ -196,21 +233,54 @@ class StatementInterpreter(InterpreterBase):
                 node.column,
             )
 
-        for element in iterable.value:
-            previous_environment = self.environment
+        self.enter_loop()
 
-            self.environment = self.environment.create_child()
+        try:
+            for element in iterable.value:
+                previous_environment = self.environment
 
-            try:
-                self.environment.declare_variable(
-                    node.variable_name,
-                    "U",
-                    element,
-                )
+                self.environment = self.environment.create_child()
 
-                self.visit(node.body)
+                try:
+                    self.environment.declare_variable(
+                        node.variable_name,
+                        "U",
+                        element,
+                    )
 
-            finally:
-                self.environment = previous_environment
+                    try:
+                        self.visit(node.body)
+
+                    except ContinueSignal:
+                        continue
+
+                    except BreakSignal:
+                        break
+
+                finally:
+                    self.environment = previous_environment
+
+        finally:
+            self.exit_loop()
 
         return None
+
+    def visit_break_statement(self, node):
+        if self.loop_depth == 0:
+            raise InvalidLoopControlError(
+                "Break statement can only be used inside a loop.",
+                node.line,
+                node.column,
+            )
+
+        raise BreakSignal()
+
+    def visit_continue_statement(self, node):
+        if self.loop_depth == 0:
+            raise InvalidLoopControlError(
+                "Continue statement can only be used inside a loop.",
+                node.line,
+                node.column,
+            )
+
+        raise ContinueSignal()

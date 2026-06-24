@@ -26,6 +26,8 @@ from nova.ast import (
     MapLiteral,
     PropertyAccess,
     PropertyAssignment,
+    BreakStatement,
+    ContinueStatement,
 )
 
 
@@ -33,6 +35,8 @@ class InterpreterBase:
     def __init__(self):
         self.environment = Environment()
         self.output = []
+
+        self.loop_depth = 0
 
     def interpret(self, program):
         return self.visit(program)
@@ -73,6 +77,12 @@ class InterpreterBase:
 
         if isinstance(node, ForEachStatement):
             return self.visit_for_each_statement(node)
+
+        if isinstance(node, BreakStatement):
+            return self.visit_break_statement(node)
+
+        if isinstance(node, ContinueStatement):
+            return self.visit_continue_statement(node)
 
         if isinstance(node, NumberLiteral):
             return self.visit_number_literal(node)
@@ -155,6 +165,12 @@ class InterpreterBase:
     def visit_for_each_statement(self, node):
         raise NotImplementedError
 
+    def visit_break_statement(self, node):
+        raise NotImplementedError
+
+    def visit_continue_statement(self, node):
+        raise NotImplementedError
+
     # -------------------------
     # Literal Visitors
     # -------------------------
@@ -221,3 +237,9 @@ class InterpreterBase:
 
     def get_array_depth(self, target):
         raise NotImplementedError
+
+    def enter_loop(self):
+        self.loop_depth += 1
+
+    def exit_loop(self):
+        self.loop_depth -= 1

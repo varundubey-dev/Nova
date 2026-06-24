@@ -18,6 +18,8 @@ from .statements import (
     WhileStatement,
     ForRangeStatement,
     ForEachStatement,
+    BreakStatement,
+    ContinueStatement,
 )
 
 from .expressions import (
@@ -63,6 +65,8 @@ __all__ = [
     "WhileStatement",
     "ForRangeStatement",
     "ForEachStatement",
+    "BreakStatement",
+    "ContinueStatement",
     # Expressions
     "Identifier",
     "ArrayAccess",

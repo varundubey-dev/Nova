@@ -20,6 +20,9 @@ class TokenType(Enum):
     FOR = auto()
     IN = auto()
 
+    BREAK = auto()
+    CONTINUE = auto()
+
     # Datatypes
     TYPE = auto()
 

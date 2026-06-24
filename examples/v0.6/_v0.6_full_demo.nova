@@ -460,6 +460,85 @@ PI:: N = 3.14159
 
 print(PI)
 
+// ======================================================
+// BREAK
+// ======================================================
+
+for i in 0...10 {
+
+    if i == 5 {
+        break
+    }
+
+    print(
+        "BREAK",
+        i
+    )
+
+}
+
+
+// ======================================================
+// CONTINUE
+// ======================================================
+
+for i in 0...5 {
+
+    if i == 2 {
+        continue
+    }
+
+    print(
+        "CONTINUE",
+        i
+    )
+
+}
+
+
+// ======================================================
+// BREAK IN WHILE
+// ======================================================
+
+index: N = 0
+
+while true {
+
+    if index == 3 {
+        break
+    }
+
+    print(
+        "WHILE_BREAK",
+        index
+    )
+
+    index = index + 1
+
+}
+
+
+// ======================================================
+// CONTINUE IN WHILE
+// ======================================================
+
+index = 0
+
+while index < 5 {
+
+    index = index + 1
+
+    if index == 3 {
+        continue
+    }
+
+    print(
+        "WHILE_CONTINUE",
+        index
+    )
+
+}
+
 
 // ======================================================
 // EXPECTED OUTPUT 
@@ -552,6 +631,23 @@ true
 null
 [1, 2, 3]
 3.14159
+BREAK 0
+BREAK 1
+BREAK 2
+BREAK 3
+BREAK 4
+CONTINUE 0
+CONTINUE 1
+CONTINUE 3
+CONTINUE 4
+CONTINUE 5
+WHILE_BREAK 0
+WHILE_BREAK 1
+WHILE_BREAK 2
+WHILE_CONTINUE 1
+WHILE_CONTINUE 2
+WHILE_CONTINUE 4
+WHILE_CONTINUE 5
 */
 
 // ======================================================

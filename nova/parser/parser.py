@@ -30,6 +30,8 @@ from nova.ast import (
     WhileStatement,
     ForRangeStatement,
     ForEachStatement,
+    BreakStatement,
+    ContinueStatement,
 )
 
 from nova.errors import (
@@ -123,6 +125,12 @@ class Parser:
 
         if self.current_token.type == TokenType.FOR:
             return self.parse_for_statement()
+
+        if self.current_token.type == TokenType.BREAK:
+            return self.parse_break_statement()
+
+        if self.current_token.type == TokenType.CONTINUE:
+            return self.parse_continue_statement()
 
         if self.current_token.type == TokenType.IDENTIFIER:
             next_token = self.peek()
@@ -1177,4 +1185,20 @@ class Parser:
             body=body,
             line=for_token.line,
             column=for_token.column,
+        )
+
+    def parse_break_statement(self):
+        token = self.consume(TokenType.BREAK)
+
+        return BreakStatement(
+            line=token.line,
+            column=token.column,
+        )
+
+    def parse_continue_statement(self):
+        token = self.consume(TokenType.CONTINUE)
+
+        return ContinueStatement(
+            line=token.line,
+            column=token.column,
         )

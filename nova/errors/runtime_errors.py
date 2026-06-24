@@ -32,9 +32,14 @@ class NullOperationError(RuntimeError):
 class ConditionTypeError(RuntimeError):
     pass
 
+
 class InvalidRangeError(RuntimeError):
     pass
 
 
 class NotIterableError(RuntimeError):
+    pass
+
+
+class InvalidLoopControlError(RuntimeError):
     pass

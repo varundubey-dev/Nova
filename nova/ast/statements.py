@@ -192,6 +192,7 @@ class IfStatement(Statement):
             f")"
         )
 
+
 class WhileStatement(Statement):
     def __init__(
         self,
@@ -207,11 +208,9 @@ class WhileStatement(Statement):
 
     def __repr__(self):
         return (
-            f"WhileStatement("
-            f"condition={self.condition}, "
-            f"body={self.body}"
-            f")"
+            f"WhileStatement(" f"condition={self.condition}, " f"body={self.body}" f")"
         )
+
 
 class ForRangeStatement(Statement):
     def __init__(
@@ -243,6 +242,7 @@ class ForRangeStatement(Statement):
             f")"
         )
 
+
 class ForEachStatement(Statement):
     def __init__(
         self,
@@ -266,3 +266,27 @@ class ForEachStatement(Statement):
             f"body={self.body}"
             f")"
         )
+
+
+class BreakStatement(Statement):
+    def __init__(
+        self,
+        line=None,
+        column=None,
+    ):
+        super().__init__(line, column)
+
+    def __repr__(self):
+        return "BreakStatement()"
+
+
+class ContinueStatement(Statement):
+    def __init__(
+        self,
+        line=None,
+        column=None,
+    ):
+        super().__init__(line, column)
+
+    def __repr__(self):
+        return "ContinueStatement()"
