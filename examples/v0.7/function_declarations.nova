@@ -1,0 +1,15 @@
+fn hello() {
+    print("Hello")
+}
+
+fn bye() {
+    print("Bye")
+}
+
+hello()
+bye()
+
+// Output:
+//
+// Hello
+// Bye

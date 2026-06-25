@@ -1,0 +1,17 @@
+fn double(x: N) -> N {
+    return x * 2
+}
+
+fn square(x: N) -> N {
+    return x * x
+}
+
+result: N = square(
+        double(5)
+    )
+
+print(result)
+
+// Output:
+//
+// 100

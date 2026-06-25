@@ -1,0 +1,4 @@
+fn add(a: N, b: N) {
+}
+
+add(1)

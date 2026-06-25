@@ -69,7 +69,9 @@ class ExpressionInterpreter(StatementInterpreter):
                 raise FunctionArgumentCountError(
                     f"Function '{function.name}' expects "
                     f"{len(function.parameters)} argument(s), "
-                    f"got {len(arguments)}."
+                    f"got {len(arguments)}.",
+                    node.line,
+                    node.column,
                 )
 
             previous_environment = self.environment

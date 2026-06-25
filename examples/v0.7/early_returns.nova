@@ -1,0 +1,15 @@
+fn test() {
+
+    print("Start")
+
+    return
+
+    print("Never")
+
+}
+
+test()
+
+// Output:
+//
+// Start

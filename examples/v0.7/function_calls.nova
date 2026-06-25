@@ -1,0 +1,13 @@
+fn greet() {
+    print("Welcome")
+}
+
+greet()
+greet()
+greet()
+
+// Output:
+//
+// Welcome
+// Welcome
+// Welcome

@@ -1,0 +1,11 @@
+fn square(x: N) -> N {
+    return x * x
+}
+
+value: N = square(6)
+
+print(value)
+
+// Output:
+//
+// 36

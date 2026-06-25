@@ -1,6 +1,6 @@
 [project]
 name = "nova"
-version = "0.6.1"
+version = "0.7.0"
 
 [project.scripts]
 nova = "nova.cli:main"

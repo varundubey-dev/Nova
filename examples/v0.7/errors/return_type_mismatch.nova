@@ -1,0 +1,7 @@
+fn value() -> N {
+
+    return "Hello"
+
+}
+
+print(value())

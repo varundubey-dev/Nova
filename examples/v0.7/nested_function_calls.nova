@@ -1,0 +1,16 @@
+fn add(a: N, b: N) -> N {
+    return a + b
+}
+
+print(
+
+    add(
+        add(1, 2),
+        add(3, 4)
+    )
+
+)
+
+// Output:
+//
+// 10

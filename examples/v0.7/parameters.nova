@@ -1,0 +1,15 @@
+fn greet(name: S) {
+    print("Hello", name)
+}
+
+fn add(a: N, b: N) {
+    print(a + b)
+}
+
+greet("Nova")
+add(10, 20)
+
+// Output:
+//
+// Hello Nova
+// 30

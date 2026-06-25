@@ -1,0 +1,5 @@
+fn value() -> N {
+
+}
+
+print(value())

@@ -1,0 +1,13 @@
+fn create() {
+
+    value: N = 50
+
+    print(value)
+
+}
+
+create()
+
+// Output:
+//
+// 50

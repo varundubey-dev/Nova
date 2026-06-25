@@ -10,7 +10,6 @@ from nova.interpreter.runtime_values import (
 from nova.ast import ArrayType
 
 from nova.errors import (
-    RuntimeError,
     DatatypeMismatchError,
     DuplicateDeclarationError,
     UndeclaredVariableError,

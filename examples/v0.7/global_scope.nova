@@ -1,0 +1,13 @@
+name: S = "Nova"
+
+fn greet() {
+
+    print(name)
+
+}
+
+greet()
+
+// Output:
+//
+// Nova

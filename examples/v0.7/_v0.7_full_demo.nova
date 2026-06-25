@@ -1,0 +1,311 @@
+User: M = {
+    name: S,
+    age: N,
+    scores: [N]
+}
+
+globalName: S = "Nova"
+
+numbers: [N] = [
+    10,
+    20,
+    30
+]
+
+greet()
+
+fn greet() {
+
+    print(globalName)
+
+    return
+
+    print("never")
+
+}
+
+fn identity(value: N) -> N {
+
+    return value
+
+}
+
+fn add(
+    a: N,
+    b: N
+) -> N {
+
+    return a + b
+
+}
+
+fn max(
+    a: N,
+    b: N
+) -> N {
+
+    if a > b {
+
+        return a
+
+    }
+
+    return b
+
+}
+
+fn factorial(
+    n: N
+) -> N {
+
+    if n <= 1 {
+
+        return 1
+
+    }
+
+    return n * factorial(
+        n - 1
+    )
+
+}
+
+fn complex(
+    user: User,
+    values: [N],
+    x: N
+) -> N {
+
+    temp: N = add(
+        x,
+        values[0]
+    )
+
+    while false {
+
+        break
+
+    }
+
+    for i in 0..3 {
+
+        continue
+
+    }
+
+    print(
+
+        user.name,
+
+        values[
+            add(
+                0,
+                1
+            )
+        ],
+
+        add(
+            values[0],
+            values[
+                factorial(
+                    1
+                )
+            ]
+        ),
+
+        factorial(
+
+            add(
+
+                2,
+
+                max(
+
+                    3,
+
+                    add(
+                        4,
+                        5
+                    )
+
+                )
+
+            )
+
+        )
+
+    )
+
+    return max(
+
+        factorial(
+
+            add(
+                temp,
+                1
+            )
+
+        ),
+
+        add(
+
+            max(
+                5,
+                6
+            ),
+
+            factorial(
+                3
+            )
+
+        )
+
+    )
+
+}
+
+user: User = {
+
+    name = "Varun",
+
+    age = 19,
+
+    scores = [
+
+        100,
+
+        200,
+
+        300
+
+    ]
+
+}
+
+result: N = complex(
+
+    user,
+
+    numbers,
+
+    factorial(
+
+        add(
+
+            identity(1),
+
+            max(
+                1,
+                2
+            )
+
+        )
+
+    )
+
+)
+
+print(
+
+    add(
+
+        factorial(
+
+            max(
+
+                add(
+                    1,
+                    2
+                ),
+
+                factorial(
+                    4
+                )
+
+            )
+
+        ),
+
+        max(
+
+            add(
+                5,
+                6
+            ),
+
+            factorial(
+                3
+            )
+
+        )
+
+    )
+
+)
+
+print(
+
+    complex(
+
+        user,
+
+        numbers,
+
+        add(
+
+            factorial(
+                2
+            ),
+
+            max(
+                3,
+                4
+            )
+
+        )
+
+    )
+
+)
+
+print(
+
+    user.name,
+
+    user.scores[
+        0
+    ],
+
+    numbers[
+        add(
+            1,
+            1
+        )
+    ]
+
+)
+
+print(
+
+    true
+        ? factorial(
+            add(
+                2,
+                3
+            )
+        )
+        : add(
+            1,
+            2
+        )
+
+)
+
+// Expected:
+// Nova
+// Varun 20 30 39916800
+// 620448401733239439360011
+// Varun 20 30 39916800
+// 355687428096000
+// Varun 100 30
+// 120
