@@ -2,6 +2,8 @@
 // NOVA BUILT-IN MATHEMATICAL FUNCTIONS TEST
 // ======================================================
 
+import math 
+
 User: M = {
     name: S,
     age: N,
@@ -23,44 +25,44 @@ user: User = {
 // ======================================================
 
 print(
-    abs(-15)
+    math.abs(-15)
 )
 
 print(
-    min(
+    math.min(
         10,
         20
     )
 )
 
 print(
-    max(
+    math.max(
         10,
         20
     )
 )
 
 print(
-    pow(
+    math.pow(
         2,
         10
     )
 )
 
 print(
-    sqrt(25)
+    math.sqrt(25)
 )
 
 print(
-    round(4.7)
+    math.round(4.7)
 )
 
 print(
-    floor(4.9)
+    math.floor(4.9)
 )
 
 print(
-    ceil(4.1)
+    math.ceil(4.1)
 )
 
 // ======================================================
@@ -84,20 +86,20 @@ numbers: [N] = [
 print(numbers)
 
 print(
-    abs(
+    math.abs(
         numbers[1]
     )
 )
 
 print(
-    max(
+    math.max(
         numbers[0],
         numbers[4]
     )
 )
 
 print(
-    min(
+    math.min(
         numbers[2],
         numbers[3]
     )
@@ -108,20 +110,20 @@ print(
 // ======================================================
 
 print(
-    abs(
+    math.abs(
         user.age
     )
 )
 
 print(
-    max(
+    math.max(
         user.scores[0],
         user.scores[2]
     )
 )
 
 print(
-    min(
+    math.min(
         user.scores[0],
         user.scores[2]
     )
@@ -135,7 +137,7 @@ fn square(
     value: N
 ) -> N {
 
-    return pow(
+    return math.pow(
         value,
         2
     )
@@ -147,7 +149,7 @@ fn distance(
     y: N
 ) -> N {
 
-    return sqrt(
+    return math.sqrt(
 
         square(x)
 
@@ -192,7 +194,7 @@ fn factorial(
 
 print(
 
-    max(
+    math.max(
 
         factorial(5),
 
@@ -204,7 +206,7 @@ print(
 
 print(
 
-    min(
+    math.min(
 
         factorial(3),
 
@@ -220,15 +222,15 @@ print(
 
 print(
 
-    sqrt(
+    math.sqrt(
 
-        pow(
+        math.pow(
 
-            max(
+            math.max(
 
                 3,
 
-                min(
+                math.min(
                     10,
                     8
                 )
@@ -245,11 +247,11 @@ print(
 
 print(
 
-    round(
+    math.round(
 
-        sqrt(
+        math.sqrt(
 
-            pow(
+            math.pow(
                 5,
                 2
             )
@@ -268,7 +270,7 @@ for value in numbers {
 
     print(
 
-        abs(value)
+        math.abs(value)
 
     )
 
@@ -278,7 +280,7 @@ for i in 1...5 {
 
     print(
 
-        pow(
+        math.pow(
             i,
             2
         )
@@ -293,9 +295,9 @@ while counter <= 5 {
 
     print(
 
-        sqrt(
+        math.sqrt(
 
-            pow(
+            math.pow(
                 counter,
                 2
             )
@@ -314,12 +316,12 @@ while counter <= 5 {
 
 print(
 
-    max(
+    math.max(
         10,
         20
     ) == 20
 
-        ? abs(-999)
+        ? math.abs(-999)
 
         : 0
 
@@ -327,12 +329,12 @@ print(
 
 print(
 
-    min(
+    math.min(
         5,
         2
     ) == 2
 
-        ? sqrt(81)
+        ? math.sqrt(81)
 
         : 0
 
@@ -344,17 +346,17 @@ print(
 
 print(
 
-    ceil(
+    math.ceil(
 
-        sqrt(
+        math.sqrt(
 
-            pow(
+            math.pow(
 
-                max(
+                math.max(
 
-                    abs(-8),
+                    math.abs(-8),
 
-                    min(
+                    math.min(
 
                         12,
 
@@ -376,20 +378,20 @@ print(
 
 print(
 
-    floor(
+    math.floor(
 
-        sqrt(
+        math.sqrt(
 
-            pow(
+            math.pow(
 
-                max(
+                math.max(
 
-                    min(
+                    math.min(
                         50,
                         10
                     ),
 
-                    abs(-7)
+                    math.abs(-7)
 
                 ),
 
@@ -408,15 +410,15 @@ print(
 // ======================================================
 
 print(
-    random()
+    math.random()
 )
 
 print(
-    random()
+    math.random()
 )
 
 print(
-    random()
+    math.random()
 )
 
 // ======================================================

@@ -12,7 +12,7 @@ Modules are imported using the `import` keyword.
 import math
 ```
 
-Imported members are accessed through the module name.
+Imported modules expose exported declarations through dot notation.
 
 ```text
 math.sqrt(25)

@@ -1,0 +1,20 @@
+import (
+    greet,
+    greetPerson
+) from modules.greetings
+
+import (
+    add,
+    square,
+    area
+) from modules.math
+
+greet()
+
+greetPerson("Nova")
+
+print(add(5,8))
+
+print(square(9))
+
+print(area(5))

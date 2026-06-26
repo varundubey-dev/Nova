@@ -1,6 +1,6 @@
 from nova.interpreter.statements import StatementInterpreter
 from nova.interpreter.loop_signals import ReturnSignal
-from nova.interpreter.builtins.registry import BUILTINS
+from nova.interpreter.builtins.registry import BUILTINS, RUNTIME_INTRINSICS
 
 from nova.interpreter.runtime_values import (
     NumberValue,
@@ -79,7 +79,35 @@ class ExpressionInterpreter(StatementInterpreter):
         arguments = [self.visit(argument) for argument in argument_nodes]
 
         # -------------------------
-        # Built-in Functions
+        # Runtime Intrinsics
+        # -------------------------
+
+        if isinstance(node.callee, Identifier) and node.callee.name.startswith("__"):
+            if not self.is_stdlib:
+                raise InvalidOperandError(
+                    "Runtime intrinsics may only be used inside the Standard Library.",
+                    node.line,
+                    node.column,
+                )
+
+            intrinsic = RUNTIME_INTRINSICS.get(node.callee.name[2:])
+
+            if intrinsic is None:
+                raise InvalidOperandError(
+                    f"Unknown runtime intrinsic '{node.callee.name}'.",
+                    node.line,
+                    node.column,
+                )
+
+            return intrinsic(
+                self,
+                argument_nodes,
+                arguments,
+                node,
+            )
+
+        # -------------------------
+        # Global Built-ins
         # -------------------------
 
         if isinstance(node.callee, Identifier):
@@ -137,11 +165,13 @@ class ExpressionInterpreter(StatementInterpreter):
                 )
 
             previous_environment = self.environment
+            previous_stdlib = self.is_stdlib
 
-            # IMPORTANT:
-            # Execute inside the function's declaration environment,
-            # not the caller's environment.
+            # Execute inside the function's declaration environment.
             self.environment = function.closure.create_child()
+
+            # Execute using the function's stdlib context.
+            self.is_stdlib = function.is_stdlib
 
             try:
                 for parameter, argument in zip(
@@ -181,6 +211,7 @@ class ExpressionInterpreter(StatementInterpreter):
 
             finally:
                 self.environment = previous_environment
+                self.is_stdlib = previous_stdlib
 
         finally:
             self.exit_function()

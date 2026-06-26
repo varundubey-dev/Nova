@@ -1,0 +1,5 @@
+import b
+
+export fn hello() {
+    print("A")
+}

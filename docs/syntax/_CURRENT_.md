@@ -1,10 +1,10 @@
 # NOVA Language Specification
 
-### Current Version (v0.8)
+### Current Version (v0.9)
 
 This document describes the current stable version of NOVA.
 
-The language syntax is defined by **NOVA v0.7**. Version **v0.8** expands the language by introducing NOVA's first built-in function collection without changing the language grammar.
+The language syntax is defined by **NOVA v0.9**, which introduces NOVA's first module system with imports, exports, and importable Standard Library modules.
 
 Historical specifications remain available in the versioned documentation.
 
@@ -14,7 +14,8 @@ Historical specifications remain available in the versioned documentation.
 
 | Version            | Documentation               |
 | ------------------ | --------------------------- |
-| **Current (v0.8)** | This document               |
+| **Current (v0.9)** | This document               |
+| v0.9               | [NOVA v0.9 Syntax](v0.9.md) |
 | v0.7               | [NOVA v0.7 Syntax](v0.7.md) |
 | v0.6               | [NOVA v0.6 Syntax](v0.6.md) |
 | v0.5               | [NOVA v0.5 Syntax](v0.5.md) |
@@ -29,21 +30,32 @@ Historical specifications remain available in the versioned documentation.
 
 The current NOVA syntax is defined by:
 
-* [NOVA v0.7 Language Specification](v0.7.md)
+* [NOVA v0.9 Language Specification](v0.9.md)
 
 ---
 
 ## Built-in Functions
 
-NOVA v0.8 introduces the first official collection of built-in functions. These functions are available globally and do not require imports.
+NOVA provides globally available built-in functions for commonly used operations. These functions are available without imports.
 
 Documentation:
 
-* [Built-In Functions Index](../builtins/_INDEX_.md)
+* [Built-in Functions Index](../builtins/_INDEX_.md)
 * [Input Functions](../builtins/input.md)
 * [Type Conversion Functions](../builtins/conversions.md)
 * [String Functions](../builtins/string.md)
 * [Array Functions](../builtins/array.md)
+
+---
+
+## Standard Library
+
+The Standard Library provides importable modules that extend the core language.
+
+Current modules:
+
+* [Standard Library Index](../stdlib/_INDEX_.md)
+* [Mathematics Module](../stdlib/math.md)
 
 ---
 
@@ -131,7 +143,25 @@ Documentation:
 * Type conversion functions
 * String functions
 * Array functions
-* Mathematical functions
+
+### Modules
+
+* Module imports
+* Selective imports
+* Multiline imports
+* Module aliases
+* Exported variables
+* Exported constants
+* Exported functions
+* Exported schemas
+* Hierarchical module paths
+* Module resolution
+* Circular import detection
+
+### Standard Library
+
+* Importable modules
+* Mathematics module
 
 ---
 
@@ -147,7 +177,7 @@ Runnable examples:
 
 Current release:
 
-* [NOVA v0.8.0 Release Notes](../releases/v0.8.0.md)
+* [NOVA v0.9.0 Release Notes](../releases/v0.9.0.md)
 * [Release Notes](../releases/)
 
 ---
@@ -163,3 +193,4 @@ Previous language specifications are preserved for historical reference.
 * [v0.5](v0.5.md)
 * [v0.6](v0.6.md)
 * [v0.7](v0.7.md)
+* [v0.9](v0.9.md)

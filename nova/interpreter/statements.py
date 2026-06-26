@@ -90,6 +90,7 @@ class StatementInterpreter(InterpreterBase):
             body=node.body,
             return_type=node.return_type,
             closure=self.environment,
+            is_stdlib=self.is_stdlib,
         )
 
         self.environment.declare_function(

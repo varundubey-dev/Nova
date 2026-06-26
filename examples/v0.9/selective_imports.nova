@@ -1,0 +1,9 @@
+import greet from modules.greetings
+import add from modules.math
+import PI from modules.math
+
+greet()
+
+print(add(10,20))
+
+print(PI)

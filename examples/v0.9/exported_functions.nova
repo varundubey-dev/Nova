@@ -1,0 +1,5 @@
+import modules.math
+
+print(math.add(10,20))
+
+print(math.square(7))

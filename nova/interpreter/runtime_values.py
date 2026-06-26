@@ -55,16 +55,15 @@ class MapValue(RuntimeValue):
 
 
 class FunctionValue(RuntimeValue):
-    def __init__(self, name, parameters, body, return_type, closure):
+    def __init__(self, name, parameters, body, return_type, closure, is_stdlib=False):
         super().__init__(None)
 
         self.name = name
         self.parameters = parameters
         self.body = body
         self.return_type = return_type
-
-        # Environment where the function was declared.
         self.closure = closure
+        self.is_stdlib = is_stdlib
 
     def __repr__(self):
         return f"FunctionValue(" f"{self.name}" f")"

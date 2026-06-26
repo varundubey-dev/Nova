@@ -2,9 +2,15 @@
 
 Mathematical functions perform common numeric operations.
 
+All functions in this module require:
+
+```nova
+import math
+```
+
 ---
 
-## abs(number)
+## math.abs(number)
 
 Returns the absolute value of a number.
 
@@ -22,7 +28,7 @@ Returns the absolute value of a number.
 
 ```nova
 print(
-    abs(-15)
+    math.abs(-15)
 )
 ```
 
@@ -34,7 +40,7 @@ Output
 
 ---
 
-## min(a, b)
+## math.min(a, b)
 
 Returns the smaller of two numbers.
 
@@ -53,7 +59,7 @@ Returns the smaller of two numbers.
 
 ```nova
 print(
-    min(
+    math.min(
         5,
         10
     )
@@ -68,7 +74,7 @@ Output
 
 ---
 
-## max(a, b)
+## math.max(a, b)
 
 Returns the larger of two numbers.
 
@@ -87,7 +93,7 @@ Returns the larger of two numbers.
 
 ```nova
 print(
-    max(
+    math.max(
         5,
         10
     )
@@ -102,7 +108,7 @@ Output
 
 ---
 
-## pow(base, exponent)
+## math.pow(base, exponent)
 
 Raises a number to a power.
 
@@ -121,7 +127,7 @@ Raises a number to a power.
 
 ```nova
 print(
-    pow(
+    math.pow(
         2,
         10
     )
@@ -136,7 +142,7 @@ Output
 
 ---
 
-## sqrt(number)
+## math.sqrt(number)
 
 Returns the square root of a number.
 
@@ -154,7 +160,7 @@ Returns the square root of a number.
 
 ```nova
 print(
-    sqrt(25)
+    math.sqrt(25)
 )
 ```
 
@@ -166,7 +172,7 @@ Output
 
 ---
 
-## round(number)
+## math.round(number)
 
 Rounds a number to the nearest integer.
 
@@ -184,7 +190,7 @@ Rounds a number to the nearest integer.
 
 ```nova
 print(
-    round(4.7)
+    math.round(4.7)
 )
 ```
 
@@ -196,7 +202,7 @@ Output
 
 ---
 
-## floor(number)
+## math.floor(number)
 
 Rounds a number downward to the nearest integer.
 
@@ -214,7 +220,7 @@ Rounds a number downward to the nearest integer.
 
 ```nova
 print(
-    floor(4.9)
+    math.floor(4.9)
 )
 ```
 
@@ -226,7 +232,7 @@ Output
 
 ---
 
-## ceil(number)
+## math.ceil(number)
 
 Rounds a number upward to the nearest integer.
 
@@ -244,7 +250,7 @@ Rounds a number upward to the nearest integer.
 
 ```nova
 print(
-    ceil(4.1)
+    math.ceil(4.1)
 )
 ```
 
@@ -256,7 +262,7 @@ Output
 
 ---
 
-## random()
+## math.random()
 
 Returns a pseudo-random number.
 
@@ -272,7 +278,7 @@ None.
 
 ```nova
 print(
-    random()
+    math.random()
 )
 ```
 

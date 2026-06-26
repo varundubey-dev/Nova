@@ -1,0 +1,9 @@
+import Person from modules.models
+
+import createPerson from modules.models
+
+person: Person = createPerson("Nova")
+
+print(person.name)
+
+print(person.age)

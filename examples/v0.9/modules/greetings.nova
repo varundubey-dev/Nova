@@ -1,0 +1,16 @@
+export greeting: S = "Hello from greetings"
+
+secret: S = "PRIVATE"
+
+export fn greet() {
+
+    print(greeting)
+
+}
+
+export fn greetPerson(name: S) {
+
+    print(greeting)
+    print(name)
+
+}

@@ -59,6 +59,11 @@ BUILTINS = {
     "toBoolean": builtin_to_boolean,
     "toNumber": builtin_to_number,
     "toString": builtin_to_string,
+    # Input
+    "input": builtin_input,
+}
+
+RUNTIME_INTRINSICS = {
     # Maths
     "abs": builtin_abs,
     "min": builtin_min,
@@ -69,6 +74,4 @@ BUILTINS = {
     "floor": builtin_floor,
     "ceil": builtin_ceil,
     "random": builtin_random,
-    # Input
-    "input": builtin_input,
 }

@@ -80,10 +80,10 @@ class ModuleResolver:
         self.loading_stack.append(key)
 
         try:
-            module = self.loader.load(path)
-
-            module.is_stdlib = is_stdlib
-
+            module = self.loader.load(
+                path,
+                is_stdlib=is_stdlib,
+            )
             return module
 
         finally:

@@ -1,0 +1,19 @@
+export Person: M = {
+
+    name: S,
+    age: N,
+
+}
+
+export DEFAULT_AGE:: N = 18
+
+export fn createPerson(name: S) -> Person {
+
+    return {
+
+        name = name,
+        age = DEFAULT_AGE,
+
+    }
+
+}

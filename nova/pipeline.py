@@ -7,6 +7,7 @@ def create_interpreter(
     source: str,
     input_provider=None,
     resolver=None,
+    is_stdlib=False,
 ):
     lexer = Lexer(source)
     tokens = lexer.tokenize()
@@ -17,6 +18,7 @@ def create_interpreter(
     interpreter = Interpreter(
         input_provider=input_provider,
         resolver=resolver,
+        is_stdlib=is_stdlib,
     )
 
     interpreter.interpret(ast)

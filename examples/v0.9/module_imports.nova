@@ -1,0 +1,5 @@
+import modules.greetings
+
+greetings.greet()
+
+print(greetings.greeting)

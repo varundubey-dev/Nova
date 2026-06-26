@@ -1,0 +1,7 @@
+import modules.math as m
+
+print(m.PI)
+
+print(m.square(8))
+
+print(m.area(5))

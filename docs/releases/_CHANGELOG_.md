@@ -8,9 +8,10 @@ For complete details about each release, see the release notes in [Release Notes
 
 ## Version History
 
-| Version    | Release | Summary                                                                                                                                        |
-| ---------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| **v0.8.0** | Major   | Introduced NOVA's first collection of globally available built-in functions for arrays, strings, mathematics, type conversion, and input, along with playground-ready input support. |
+| Version    | Release | Summary |
+| ---------- | ------- | ------- |
+| **v0.9.0** | Major   | Introduced NOVA's module system with imports, exports, module aliases, hierarchical module resolution, circular import detection, and the first importable Standard Library module (`math`). |
+| **v0.8.0** | Major   | Introduced NOVA's first collection of globally available built-in functions for arrays, strings, type conversion, and input, along with playground-ready input support. |
 | **v0.7.0** | Major   | Introduced user-defined functions, recursion, return values, parameters, function scope, and reusable program logic.                           |
 | **v0.6.1** | Patch   | Added `break` and `continue` statements with loop control validation.                                                                          |
 | **v0.6.0** | Major   | Introduced structured iteration through while loops, range loops, array iteration, nested loops, and loop scope.                               |
@@ -52,7 +53,10 @@ v0.7 ── User-defined Functions
 v0.8 ── Built-in Functions
           │
           ▼
-v0.9 ── Module System & Standard Library (Planned)
+v0.9 ── Module System & Standard Library
+          │
+          ▼
+v1.0 ── Standard Library Expansion
 ```
 
 ---
@@ -61,6 +65,7 @@ v0.9 ── Module System & Standard Library (Planned)
 
 | Version | Release Notes                          |
 | ------- | -------------------------------------- |
+| v0.9.0  | [NOVA v0.9.0 Release Notes](v0.9.0.md) |
 | v0.8.0  | [NOVA v0.8.0 Release Notes](v0.8.0.md) |
 | v0.7.0  | [NOVA v0.7.0 Release Notes](v0.7.0.md) |
 | v0.6.1  | [NOVA v0.6.1 Release Notes](v0.6.1.md) |
@@ -76,17 +81,15 @@ v0.9 ── Module System & Standard Library (Planned)
 
 ## Roadmap
 
-**Current Version:** `v0.8.0`
+**Current Version:** `v0.9.0`
 
-**Next Planned Release:** `v0.9.0`
+**Next Planned Release:** `v1.0.0`
 
 Focus areas:
 
-* Module imports
-* Multi-file programs
-* Module resolution
-* Export declarations
-* Import aliasing
-* Circular import detection
-* Standard library module imports
-* Improved project organization
+* Expanded Standard Library
+* Additional library modules
+* Time module
+* Random module
+* JSON module
+* Improved library organization

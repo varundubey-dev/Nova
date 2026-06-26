@@ -1,0 +1,37 @@
+export PI:: N = 3.141592653589793
+
+export fn abs(value: N) -> N {
+    return __abs(value)
+}
+
+export fn min(a: N, b: N) -> N {
+    return __min(a, b)
+}
+
+export fn max(a: N, b: N) -> N {
+    return __max(a, b)
+}
+
+export fn pow(base: N, exponent: N) -> N {
+    return __pow(base, exponent)
+}
+
+export fn sqrt(value: N) -> N {
+    return __sqrt(value)
+}
+
+export fn round(value: N) -> N {
+    return __round(value)
+}
+
+export fn floor(value: N) -> N {
+    return __floor(value)
+}
+
+export fn ceil(value: N) -> N {
+    return __ceil(value)
+}
+
+export fn random() -> N {
+    return __random()
+}

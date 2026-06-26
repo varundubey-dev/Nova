@@ -1,0 +1,19 @@
+export PI:: N = 3.14159
+
+export fn add(a: N, b: N) -> N {
+
+    return a + b
+
+}
+
+export fn square(x: N) -> N {
+
+    return x * x
+
+}
+
+export fn area(radius: N) -> N {
+
+    return PI * radius * radius
+
+}

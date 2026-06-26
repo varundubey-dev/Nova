@@ -1,0 +1,7 @@
+import greet as hello from modules.greetings
+
+import add as plus from modules.math
+
+hello()
+
+print(plus(100,200))

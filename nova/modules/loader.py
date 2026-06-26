@@ -9,7 +9,11 @@ class ModuleLoader:
         self.resolver = resolver
         self.cache = {}
 
-    def load(self, path):
+    def load(
+        self,
+        path,
+        is_stdlib=False,
+    ):
         module_path = str(Path(path).resolve())
 
         if module_path in self.cache:
@@ -20,13 +24,14 @@ class ModuleLoader:
         interpreter = create_interpreter(
             source,
             resolver=self.resolver,
+            is_stdlib=is_stdlib,
         )
 
         module = ModuleValue(
             name=Path(module_path).stem,
             exports=interpreter.environment.get_exports(),
             path=module_path,
-            is_stdlib=False,
+            is_stdlib=is_stdlib,
         )
 
         self.cache[module_path] = module
