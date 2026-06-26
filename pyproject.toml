@@ -1,6 +1,59 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "nova"
-version = "0.9.0"
+name = "nova-pl"
+version = "1.0.2"
+description = "A simple, modern, statically-typed programming language implemented in Python."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+
+authors = [
+    { name = "Varun Dubey", email = "varundubey963@gmail.com" }
+]
+
+maintainers = [
+    { name = "Varun Dubey", email = "varundubey963@gmail.com" }
+]
+
+keywords = [
+    "nova",
+    "programming-language",
+    "interpreter",
+    "compiler",
+    "language",
+    "statically-typed"
+]
+
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: Interpreters",
+    "Topic :: Software Development :: Compilers"
+]
+
+[project.urls]
+Homepage = "https://nova.varundubey.dev"
+Documentation = "https://nova.varundubey.dev/docs"
+Repository = "https://github.com/varundubey-dev/nova"
+Issues = "https://github.com/varundubey-dev/nova/issues"
 
 [project.scripts]
 nova = "nova.cli:main"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["nova*"]
+
+[tool.setuptools.package-data]
+nova = [
+    "stdlibs/*.nova",
+]

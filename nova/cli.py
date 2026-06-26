@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+from nova import __version__
 from nova.api import run_file
 
 from nova.errors import (
@@ -68,6 +69,27 @@ def format_error(error, source, path):
 
 
 def main():
+    if len(sys.argv) == 2:
+        arg = sys.argv[1]
+
+        if arg in ("--version", "-v"):
+            print(f"NOVA Programming Language v{__version__}")
+            return
+
+        if arg in ("--help", "-h"):
+            print(
+                f"""NOVA Programming Language v{__version__}
+
+Usage:
+    nova <file.nova>
+
+Options:
+    -h, --help       Show this help message
+    -v, --version    Show NOVA version
+"""
+            )
+            return
+
     if len(sys.argv) != 2:
         print("Usage: nova <file.nova>")
         sys.exit(1)
