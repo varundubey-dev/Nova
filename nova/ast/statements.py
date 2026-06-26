@@ -18,25 +18,22 @@ class Program(Statement):
 
 class VariableDeclaration(Statement):
     def __init__(
-        self,
-        name,
-        var_type,
-        value=None,
-        line=None,
-        column=None,
+        self, name, var_type, value=None, line=None, column=None, exported=False
     ):
         super().__init__(line, column)
 
         self.name = name
         self.var_type = var_type
         self.value = value
+        self.exported = exported
 
     def __repr__(self):
         return (
             f"VariableDeclaration("
             f"name={self.name!r}, "
             f"var_type={self.var_type!r}, "
-            f"value={self.value}"
+            f"value={self.value}, "
+            f"exported={self.exported}"
             f")"
         )
 
@@ -49,19 +46,22 @@ class ConstantDeclaration(Statement):
         value=None,
         line=None,
         column=None,
+        exported=False,
     ):
         super().__init__(line, column)
 
         self.name = name
         self.const_type = const_type
         self.value = value
+        self.exported = exported
 
     def __repr__(self):
         return (
             f"ConstantDeclaration("
             f"name={self.name!r}, "
             f"const_type={self.const_type!r}, "
-            f"value={self.value}"
+            f"value={self.value}, "
+            f"exported={self.exported}"
             f")"
         )
 
@@ -75,6 +75,7 @@ class FunctionDeclaration(Statement):
         return_type=None,
         line=None,
         column=None,
+        exported=False,
     ):
         super().__init__(line, column)
 
@@ -82,6 +83,7 @@ class FunctionDeclaration(Statement):
         self.parameters = parameters
         self.body = body
         self.return_type = return_type
+        self.exported = exported
 
     def __repr__(self):
         return (
@@ -89,6 +91,7 @@ class FunctionDeclaration(Statement):
             f"name={self.name!r}, "
             f"parameters={self.parameters}, "
             f"return_type={self.return_type!r}, "
+            f"exported={self.exported}, "
             f"body={self.body}"
             f")"
         )
@@ -157,15 +160,21 @@ class SchemaDeclaration(Statement):
         schema,
         line=None,
         column=None,
+        exported=False,
     ):
         super().__init__(line, column)
 
         self.name = name
         self.schema = schema
+        self.exported = exported
 
     def __repr__(self):
         return (
-            f"SchemaDeclaration(" f"name={self.name!r}, " f"schema={self.schema}" f")"
+            f"SchemaDeclaration("
+            f"name={self.name!r}, "
+            f"schema={self.schema}, "
+            f"exported={self.exported}"
+            f")"
         )
 
 
@@ -355,3 +364,48 @@ class ContinueStatement(Statement):
 
     def __repr__(self):
         return "ContinueStatement()"
+
+class ImportStatement(Statement):
+    def __init__(
+        self,
+        module_path,
+        imports=None,
+        alias=None,
+        line=None,
+        column=None,
+    ):
+        super().__init__(line, column)
+
+        self.module_path = module_path
+        self.imports = imports
+        self.alias = alias
+
+    def __repr__(self):
+        return (
+            f"ImportStatement("
+            f"module_path={self.module_path}, "
+            f"imports={self.imports}, "
+            f"alias={self.alias!r}"
+            f")"
+        )
+
+class ImportItem(Node):
+    def __init__(
+        self,
+        name,
+        alias=None,
+        line=None,
+        column=None,
+    ):
+        super().__init__(line, column)
+
+        self.name = name
+        self.alias = alias
+
+    def __repr__(self):
+        return (
+            f"ImportItem("
+            f"name={self.name!r}, "
+            f"alias={self.alias!r}"
+            f")"
+        )
