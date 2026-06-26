@@ -19,6 +19,10 @@ KEYWORDS = {
     "continue": TokenType.CONTINUE,
     "fn": TokenType.FN,
     "return": TokenType.RETURN,
+    "import": TokenType.IMPORT,
+    "from": TokenType.FROM,
+    "export": TokenType.EXPORT,
+    "as": TokenType.AS,
     "true": TokenType.BOOLEAN,
     "false": TokenType.BOOLEAN,
     "null": TokenType.NULL,
@@ -35,26 +39,12 @@ BUILTIN_FUNCTIONS = {
     "remove",
     "contains",
     "clear",
-
     # Conversions
     "toString",
     "toNumber",
     "toBoolean",
-
     # Input
     "input",
-
-    # Math
-    "abs",
-    "min",
-    "max",
-    "pow",
-    "sqrt",
-    "round",
-    "floor",
-    "ceil",
-    "random",
-
     # String
     "upper",
     "lower",
@@ -65,7 +55,11 @@ BUILTIN_FUNCTIONS = {
     "split",
 }
 
-RESERVED_IDENTIFIERS = BUILTIN_FUNCTIONS
+STANDARD_LIBRARY_MODULES = {
+    "math",
+}
+
+RESERVED_IDENTIFIERS = BUILTIN_FUNCTIONS | STANDARD_LIBRARY_MODULES
 
 
 class Lexer:

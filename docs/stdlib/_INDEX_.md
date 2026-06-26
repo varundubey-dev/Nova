@@ -1,13 +1,23 @@
 # NOVA Standard Library
 
-The NOVA Standard Library provides built-in functions for working with input, type conversion, strings, arrays, maps, and mathematics.
+The NOVA Standard Library provides importable modules that extend the core language with additional functionality.
 
-All standard library functions are available globally and may be called like user-defined functions.
+Unlike built-in functions, Standard Library modules must be explicitly imported before use.
+
+## Importing Modules
+
+Modules are imported using the `import` keyword.
+
+```text
+import math
+```
+
+Imported members are accessed through the module name.
+
+```text
+math.sqrt(25)
+```
 
 ## Library Modules
 
-- [Input Functions](input.md)
-- [Type Conversion Functions](conversions.md)
-- [String Functions](string.md)
-- [Array Functions](array.md)
-- [Mathematical Functions](math.md)
+* [Mathematics](math.md)

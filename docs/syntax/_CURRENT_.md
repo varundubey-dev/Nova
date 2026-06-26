@@ -4,7 +4,7 @@
 
 This document describes the current stable version of NOVA.
 
-The language syntax is defined by **NOVA v0.7**. Version **v0.8** expands the language by introducing the Standard Library without changing the language grammar.
+The language syntax is defined by **NOVA v0.7**. Version **v0.8** expands the language by introducing NOVA's first built-in function collection without changing the language grammar.
 
 Historical specifications remain available in the versioned documentation.
 
@@ -33,18 +33,17 @@ The current NOVA syntax is defined by:
 
 ---
 
-## Standard Library
+## Built-in Functions
 
-NOVA v0.8 introduces the first official Standard Library.
+NOVA v0.8 introduces the first official collection of built-in functions. These functions are available globally and do not require imports.
 
 Documentation:
 
-* [Standard Library Index](../stdlib/_INDEX_.md)
-* [Input Functions](../stdlib/input.md)
-* [Type Conversion Functions](../stdlib/conversions.md)
-* [String Functions](../stdlib/string.md)
-* [Array Functions](../stdlib/array.md)
-* [Mathematical Functions](../stdlib/math.md)
+* [Built-In Functions Index](../builtins/_INDEX_.md)
+* [Input Functions](../builtins/input.md)
+* [Type Conversion Functions](../builtins/conversions.md)
+* [String Functions](../builtins/string.md)
+* [Array Functions](../builtins/array.md)
 
 ---
 
@@ -126,7 +125,7 @@ Documentation:
 * Local function scope
 * Recursive functions
 
-### Standard Library
+### Built-in Functions
 
 * Input functions
 * Type conversion functions

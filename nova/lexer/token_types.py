@@ -26,6 +26,11 @@ class TokenType(Enum):
     FN = auto()
     RETURN = auto()
 
+    IMPORT = auto()
+    FROM = auto()
+    EXPORT = auto()
+    AS = auto()
+
     # Datatypes
     TYPE = auto()
 
