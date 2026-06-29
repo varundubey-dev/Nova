@@ -30,7 +30,6 @@ class TokenType(Enum):
     FROM = auto()
     EXPORT = auto()
     AS = auto()
-    COMMENT = auto()
 
     # Datatypes
     TYPE = auto()
@@ -81,3 +80,5 @@ class TokenType(Enum):
     # Special
     NEWLINE = auto()
     EOF = auto()
+    COMMENT = auto()
+    ERROR = auto()

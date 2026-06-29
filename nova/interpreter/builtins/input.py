@@ -5,6 +5,7 @@ from nova.interpreter.runtime_values import (
 from nova.errors import (
     FunctionArgumentCountError,
     FunctionArgumentTypeError,
+    RuntimeError,
 )
 
 
@@ -34,6 +35,13 @@ def builtin_input(
             )
 
         prompt = prompt.value
+
+    if interpreter.input_provider is None:
+        raise RuntimeError(
+            "input() is not supported in the web playground. Use the NOVA CLI for interactive programs.",
+            node.line,
+            node.column,
+        )
 
     text = interpreter.input_provider(prompt)
 

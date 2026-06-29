@@ -59,8 +59,13 @@ RESERVED_IDENTIFIERS = BUILTIN_FUNCTIONS
 
 
 class Lexer:
-    def __init__(self, source: str):
+    def __init__(
+        self,
+        source: str,
+        tolerant: bool = False,
+    ):
         self.source = source
+        self.tolerant = tolerant
 
         self.position = 0
 
@@ -155,6 +160,17 @@ class Lexer:
                     self.advance()
 
             elif next_char != ".":
+                if self.tolerant:
+                    value += "."
+                    self.advance()
+
+                    return Token(
+                        TokenType.NUMBER,
+                        value,
+                        start_line,
+                        start_column,
+                    )
+
                 raise InvalidFloatLiteralError(
                     "Invalid float literal.",
                     self.line,
@@ -179,6 +195,9 @@ class Lexer:
 
         value = ""
 
+        if self.tolerant:
+            value += '"'
+
         self.advance()
 
         while self.current_char is not None and self.current_char != '"':
@@ -186,11 +205,22 @@ class Lexer:
             self.advance()
 
         if self.current_char is None:
+            if self.tolerant:
+                return Token(
+                    TokenType.STRING,
+                    value,
+                    start_line,
+                    start_column,
+                )
+
             raise UnterminatedStringError(
                 "Unterminated string.",
                 start_line,
                 start_column,
             )
+
+        if self.tolerant:
+            value += '"'
 
         self.advance()
 
@@ -240,6 +270,14 @@ class Lexer:
 
             value += self.current_char
             self.advance()
+
+        if self.tolerant:
+            return Token(
+                TokenType.COMMENT,
+                value,
+                start_line,
+                start_column,
+            )
 
         raise UnterminatedCommentError(
             "Unterminated multi-line comment.",
@@ -432,6 +470,18 @@ class Lexer:
             if self.current_char == "?":
                 self.advance()
                 return Token(TokenType.QUESTION, "?", line, column)
+
+            if self.tolerant:
+                value = self.current_char
+
+                self.advance()
+
+                return Token(
+                    TokenType.ERROR,
+                    value,
+                    line,
+                    column,
+                )
 
             raise UnexpectedCharacterError(
                 f"Unexpected character '{self.current_char}'.",

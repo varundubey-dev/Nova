@@ -1,5 +1,6 @@
 from nova.interpreter.environment import Environment
-
+from nova.errors import RuntimeError
+import time
 from nova.ast import (
     Program,
     VariableDeclaration,
@@ -49,7 +50,7 @@ class InterpreterBase:
 
         self.output_callback = output_callback
 
-        self.input_provider = input_provider if input_provider is not None else input
+        self.input_provider = input_provider
 
         self.resolver = resolver
 
@@ -59,105 +60,122 @@ class InterpreterBase:
 
         self.call_depth = 0
         self.max_call_depth = 500
+        self.execution_steps = 0
+        self.max_execution_steps = 1_000_000
+        self.start_time = time.monotonic()
+        self.max_execution_time = 2.0
+
+        self.max_output_lines = 1000
 
     def interpret(self, program):
         return self.visit(program)
 
     def visit(self, node):
-        if isinstance(node, Program):
-            return self.visit_program(node)
+        try:
+            self.check_limits(node)
+        
+            self.check_limits(node)
+            if isinstance(node, Program):
+                return self.visit_program(node)
 
-        if isinstance(node, VariableDeclaration):
-            return self.visit_variable_declaration(node)
+            if isinstance(node, VariableDeclaration):
+                return self.visit_variable_declaration(node)
 
-        if isinstance(node, ConstantDeclaration):
-            return self.visit_constant_declaration(node)
+            if isinstance(node, ConstantDeclaration):
+                return self.visit_constant_declaration(node)
 
-        if isinstance(node, Assignment):
-            return self.visit_assignment(node)
+            if isinstance(node, Assignment):
+                return self.visit_assignment(node)
 
-        if isinstance(node, SchemaDeclaration):
-            return self.visit_schema_declaration(node)
+            if isinstance(node, SchemaDeclaration):
+                return self.visit_schema_declaration(node)
 
-        if isinstance(node, PropertyAssignment):
-            return self.visit_property_assignment(node)
+            if isinstance(node, PropertyAssignment):
+                return self.visit_property_assignment(node)
 
-        if isinstance(node, ImportStatement):
-            return self.visit_import_statement(node)
+            if isinstance(node, ImportStatement):
+                return self.visit_import_statement(node)
 
-        if isinstance(node, PrintStatement):
-            return self.visit_print_statement(node)
+            if isinstance(node, PrintStatement):
+                return self.visit_print_statement(node)
 
-        if isinstance(node, BlockStatement):
-            return self.visit_block_statement(node)
+            if isinstance(node, BlockStatement):
+                return self.visit_block_statement(node)
 
-        if isinstance(node, IfStatement):
-            return self.visit_if_statement(node)
+            if isinstance(node, IfStatement):
+                return self.visit_if_statement(node)
 
-        if isinstance(node, WhileStatement):
-            return self.visit_while_statement(node)
+            if isinstance(node, WhileStatement):
+                return self.visit_while_statement(node)
 
-        if isinstance(node, ForRangeStatement):
-            return self.visit_for_range_statement(node)
+            if isinstance(node, ForRangeStatement):
+                return self.visit_for_range_statement(node)
 
-        if isinstance(node, ForEachStatement):
-            return self.visit_for_each_statement(node)
+            if isinstance(node, ForEachStatement):
+                return self.visit_for_each_statement(node)
 
-        if isinstance(node, BreakStatement):
-            return self.visit_break_statement(node)
+            if isinstance(node, BreakStatement):
+                return self.visit_break_statement(node)
 
-        if isinstance(node, ContinueStatement):
-            return self.visit_continue_statement(node)
+            if isinstance(node, ContinueStatement):
+                return self.visit_continue_statement(node)
 
-        if isinstance(node, FunctionDeclaration):
-            return self.visit_function_declaration(node)
+            if isinstance(node, FunctionDeclaration):
+                return self.visit_function_declaration(node)
 
-        if isinstance(node, ReturnStatement):
-            return self.visit_return_statement(node)
+            if isinstance(node, ReturnStatement):
+                return self.visit_return_statement(node)
 
-        if isinstance(node, NumberLiteral):
-            return self.visit_number_literal(node)
+            if isinstance(node, NumberLiteral):
+                return self.visit_number_literal(node)
 
-        if isinstance(node, StringLiteral):
-            return self.visit_string_literal(node)
+            if isinstance(node, StringLiteral):
+                return self.visit_string_literal(node)
 
-        if isinstance(node, BooleanLiteral):
-            return self.visit_boolean_literal(node)
+            if isinstance(node, BooleanLiteral):
+                return self.visit_boolean_literal(node)
 
-        if isinstance(node, NullLiteral):
-            return self.visit_null_literal(node)
+            if isinstance(node, NullLiteral):
+                return self.visit_null_literal(node)
 
-        if isinstance(node, ArrayLiteral):
-            return self.visit_array_literal(node)
+            if isinstance(node, ArrayLiteral):
+                return self.visit_array_literal(node)
 
-        if isinstance(node, ArrayAccess):
-            return self.visit_array_access(node)
+            if isinstance(node, ArrayAccess):
+                return self.visit_array_access(node)
 
-        if isinstance(node, ArrayAssignment):
-            return self.visit_array_assignment(node)
+            if isinstance(node, ArrayAssignment):
+                return self.visit_array_assignment(node)
 
-        if isinstance(node, MapLiteral):
-            return self.visit_map_literal(node)
+            if isinstance(node, MapLiteral):
+                return self.visit_map_literal(node)
 
-        if isinstance(node, PropertyAccess):
-            return self.visit_property_access(node)
+            if isinstance(node, PropertyAccess):
+                return self.visit_property_access(node)
 
-        if isinstance(node, Identifier):
-            return self.visit_identifier(node)
+            if isinstance(node, Identifier):
+                return self.visit_identifier(node)
 
-        if isinstance(node, FunctionCall):
-            return self.visit_function_call(node)
+            if isinstance(node, FunctionCall):
+                return self.visit_function_call(node)
 
-        if isinstance(node, UnaryExpression):
-            return self.visit_unary_expression(node)
+            if isinstance(node, UnaryExpression):
+                return self.visit_unary_expression(node)
 
-        if isinstance(node, BinaryExpression):
-            return self.visit_binary_expression(node)
+            if isinstance(node, BinaryExpression):
+                return self.visit_binary_expression(node)
 
-        if isinstance(node, TernaryExpression):
-            return self.visit_ternary_expression(node)
+            if isinstance(node, TernaryExpression):
+                return self.visit_ternary_expression(node)
 
-        raise NotImplementedError(f"Unknown node type: {type(node).__name__}")
+            raise NotImplementedError(f"Unknown node type: {type(node).__name__}")
+        
+        except RecursionError:
+            raise RuntimeError(
+                "Maximum recursion depth exceeded.",
+                node.line,
+                node.column,
+            )
 
     # -------------------------
     # Statement Visitors
@@ -290,8 +308,32 @@ class InterpreterBase:
     def exit_loop(self):
         self.loop_depth -= 1
 
-    def enter_function(self):
+    def enter_function(self, node):
         self.call_depth += 1
+
+        if self.call_depth > self.max_call_depth:
+            raise RuntimeError(
+                "Maximum recursion depth exceeded.",
+                node.line,
+                node.column,
+            )
 
     def exit_function(self):
         self.call_depth -= 1
+    
+    def check_limits(self, node):
+        self.execution_steps += 1
+
+        if self.execution_steps > self.max_execution_steps:
+            raise RuntimeError(
+                "Execution limit exceeded.",
+                node.line,
+                node.column,
+            )
+
+        if time.monotonic() - self.start_time > self.max_execution_time:
+            raise RuntimeError(
+                "Execution timed out.",
+                node.line,
+                node.column,
+            )

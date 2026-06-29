@@ -4,7 +4,7 @@ from nova.pipeline import create_interpreter
 
 def run_source(
     source: str,
-    input_provider=None,
+    input_provider=input,
     project_root=None,
     output_callback=None,
 ):
@@ -24,7 +24,7 @@ def run_source(
 
 def run_file(
     path: str,
-    input_provider=None,
+    input_provider=input,
     project_root=None,
     output_callback=None,
 ):

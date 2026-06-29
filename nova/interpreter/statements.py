@@ -19,6 +19,7 @@ from nova.errors import (
     NotIterableError,
     InvalidLoopControlError,
     IdentifierNotExported,
+    RuntimeError
 )
 
 
@@ -119,7 +120,12 @@ class StatementInterpreter(InterpreterBase):
         values = [self.visit(expression) for expression in node.expressions]
 
         text = " ".join(self.format_value(value) for value in values)
-
+        if len(self.output) >= self.max_output_lines:
+            raise RuntimeError(
+                "Maximum output exceeded.",
+                node.line,
+                node.column,
+            )
         self.output.append(text)
 
         if self.output_callback is not None:

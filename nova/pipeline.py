@@ -14,8 +14,15 @@ def create_interpreter(
     lexer = Lexer(source)
     tokens = lexer.tokenize()
 
-    parser_tokens = [token for token in tokens if token.type != TokenType.COMMENT]
-
+    parser_tokens = [
+        token
+        for token in tokens
+        if token.type
+        not in (
+            TokenType.COMMENT,
+            TokenType.ERROR,
+        )
+    ]
     parser = Parser(parser_tokens)
     ast = parser.parse()
 

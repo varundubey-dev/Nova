@@ -17,7 +17,6 @@ from nova.errors import (
     UnknownOperatorError,
     NullOperationError,
     ConditionTypeError,
-    StackOverflowError,
     FunctionArgumentCountError,
     MissingReturnError,
     UndeclaredVariableError,
@@ -145,15 +144,9 @@ class ExpressionInterpreter(StatementInterpreter):
         # User-defined Functions
         # -------------------------
 
-        self.enter_function()
+        self.enter_function(node)
 
         try:
-            if self.call_depth > self.max_call_depth:
-                raise StackOverflowError(
-                    "Maximum function call depth exceeded.",
-                    node.line,
-                    node.column,
-                )
 
             if len(arguments) != len(function.parameters):
                 raise FunctionArgumentCountError(
@@ -174,6 +167,7 @@ class ExpressionInterpreter(StatementInterpreter):
             self.is_stdlib = function.is_stdlib
 
             try:
+
                 for parameter, argument in zip(
                     function.parameters,
                     arguments,
@@ -301,11 +295,29 @@ class ExpressionInterpreter(StatementInterpreter):
                     node.column,
                 )
         # ---------------------
+        # Addition
+        # ---------------------
+
+        if node.operator == "+":
+            # Number + Number
+            if isinstance(left, NumberValue) and isinstance(right, NumberValue):
+                return NumberValue(left.value + right.value)
+
+            # String + String
+            if isinstance(left, StringValue) and isinstance(right, StringValue):
+                return StringValue(left.value + right.value)
+
+            raise InvalidOperandError(
+                "Operator '+' requires two numbers or two strings.",
+                node.line,
+                node.column,
+            )
+
+        # ---------------------
         # Arithmetic
         # ---------------------
 
         if node.operator in (
-            "+",
             "-",
             "*",
             "/",
@@ -330,9 +342,6 @@ class ExpressionInterpreter(StatementInterpreter):
                     node.line,
                     node.column,
                 )
-
-            if node.operator == "+":
-                return NumberValue(left.value + right.value)
 
             if node.operator == "-":
                 return NumberValue(left.value - right.value)
